@@ -3,7 +3,37 @@
 
 ;;; Code:
 
-(provide 'chatwork)
+(require 'url)
+(require 'json)
+
+;;; Custom Variables
+
+;; FIXME: Use defcustom
+
+(defvar chatwork-token nil)
+
+;; Vars
+
+(defvar chatwork-me-plist nil)
+
+;;; Connectivity
+
+(defun chatwork-me ()
+  (let ((url-request-extra-headers `(("X-ChatWorkToken" . ,chatwork-token))))
+    (url-retrieve "https://api.chatwork.com/v1/me" 'chatwork-me-callback nil t)))
+
+(defun chatwork-me-callback (status)
+  (unless (plist-get status :error)
+    (let ((json-object-type 'plist))
+      (set-buffer (current-buffer))
+      (unwind-protect
+	  (let ((json-data (progn (chatwork-callback-skip-header)
+				  (json-read))))
+	    (setq chatwork-me-plist json-data))
+	(kill-buffer)))))
+
+(defun chatwork-callback-skip-header ()
+  (search-forward "\n\n" nil t))
 
 ;;; Tag
 
@@ -48,5 +78,7 @@
 (defun chatwork-insert-tag-hr ()
   (interactive)
   (chatwork-insert-tag "hr"))
+
+(provide 'chatwork)
 
 ;;; chatwork.el ends here
