@@ -60,11 +60,21 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 		  (mapcar (lambda (room)
 			    (let ((room-id   (plist-get room :room_id))
 				  (room-name (plist-get room :name)))
-			      (cons room-id room-name)))
+			      (cons room-name room-id)))
 			  chatwork-rooms-plist)))
 	(kill-buffer)))))
 
+(defun chatwork-find-room-id-by-room-name ()
+    (let* ((rooms chatwork-rooms-alist)
+	   (room-name (completing-read "Room: " rooms)))
+      (cdr (assoc room-name rooms))))
+
 (defun chatwork-send-message (message room-id)
+  (interactive (list (read-string "Message: ")
+		     (chatwork-find-room-id-by-room-name)))
+  (chatwork-post-message message room-id))
+
+(defun chatwork-post-message (message room-id)
   "Send MESSAGE to ROOM in ChatWork"
   (interactive)
   (let ((url-request-method "POST")
