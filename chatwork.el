@@ -43,6 +43,8 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 	    (setq chatwork-me-plist json-data))
 	(kill-buffer)))))
 
+(defalias 'chatwork-update-rooms 'chatwork-get-rooms)
+
 (defun chatwork-get-rooms ()
   (interactive)
   (let ((url-request-extra-headers `(("X-ChatWorkToken" . ,chatwork-token))))
@@ -65,7 +67,7 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 	(kill-buffer)))))
 
 (defun chatwork-find-room-id-by-room-name ()
-    (let* ((rooms chatwork-rooms-alist)
+    (let* ((rooms (progn (chatwork-ensure-rooms-alist) chatwork-rooms-alist))
 	   (room-name (completing-read "Room: " rooms)))
       (cdr (assoc room-name rooms))))
 
@@ -80,6 +82,12 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 			(region-beginning) (region-end))
 		       room-id)))
   (chatwork-post-message message room-id))
+
+(defun chatwork-ensure-rooms-alist ()
+  (unless chatwork-rooms-alist
+    (chatwork-update-rooms))
+  (while (not chatwork-rooms-alist)
+    (sit-for 1)))
 
 (defun chatwork-post-message (message room-id)
   "Send MESSAGE to ROOM in ChatWork"
