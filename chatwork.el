@@ -19,6 +19,7 @@
 Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 
 (defvar chatwork-me-plist nil)
+(defvar chatwork-rooms-plist nil)
 
 ;;; Connectivity
 
@@ -38,6 +39,21 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 	  (let ((json-data (progn (chatwork-callback-skip-header)
 				  (json-read))))
 	    (setq chatwork-me-plist json-data))
+	(kill-buffer)))))
+
+(defun chatwork-get-rooms ()
+  (interactive)
+  (let ((url-request-extra-headers `(("X-ChatWorkToken" . ,chatwork-token))))
+    (url-retrieve (chatwork-api-url "/rooms") 'chatwork-get-rooms-callback)))
+
+(defun chatwork-get-rooms-callback (status)
+  (unless (plist-get status :error)
+    (let ((json-object-type 'plist))
+      (set-buffer (current-buffer))
+      (unwind-protect
+	  (let ((json-data (progn (chatwork-callback-skip-header)
+				  (json-read))))
+	    (setq chatwork-rooms-plist json-data))
 	(kill-buffer)))))
 
 (defun chatwork-callback-skip-header ()
