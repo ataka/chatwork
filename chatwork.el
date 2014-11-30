@@ -70,7 +70,7 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
   (let ((url-request-method "POST")
 	(url-request-extra-headers `(("Content-Type" . "application/x-www-form-urlencoded")
 				     ("X-ChatWorkToken" . ,chatwork-token)))
-	(url-request-data (concat "body=" message)))
+	(url-request-data (concat "body=" (url-hexify-string message))))
     (url-retrieve (chatwork-api-url (format "/rooms/%d/messages" room-id))
 		  'chatwork-post-callback)))
 
