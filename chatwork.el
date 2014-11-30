@@ -64,6 +64,22 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 			  chatwork-rooms-plist)))
 	(kill-buffer)))))
 
+(defun chatwork-send-message (message room-id)
+  "Send MESSAGE to ROOM in ChatWork"
+  (interactive)
+  (let ((url-request-method "POST")
+	(url-request-extra-headers `(("Content-Type" . "application/x-www-form-urlencoded")
+				     ("X-ChatWorkToken" . ,chatwork-token)))
+	(url-request-data (concat "body=" message)))
+    (url-retrieve (chatwork-api-url (format "/rooms/%d/messages" room-id))
+		  'chatwork-post-callback)))
+
+(defun chatwork-post-callback (status)
+  (set-buffer (current-buffer))
+  (unwind-protect
+      (message "done!")
+    (kill-buffer)))
+
 (defun chatwork-callback-skip-header ()
   (search-forward "\n\n" nil t))
 
