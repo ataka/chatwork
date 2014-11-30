@@ -14,13 +14,21 @@
 
 ;; Vars
 
+(defconst chatwork-api-base-url "https://api.chatwork.com/v1"
+  "Base URL of ChatWork API.
+Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
+
 (defvar chatwork-me-plist nil)
 
 ;;; Connectivity
 
+(defun chatwork-api-url (endpoint)
+  "Return URL for ChatWork API with `chatwork-api-base-url' and ENDPOINT"
+  (concat chatwork-api-base-url endpoint))
+
 (defun chatwork-me ()
   (let ((url-request-extra-headers `(("X-ChatWorkToken" . ,chatwork-token))))
-    (url-retrieve "https://api.chatwork.com/v1/me" 'chatwork-me-callback nil t)))
+    (url-retrieve (chatwork-api-url "/me") 'chatwork-me-callback nil t)))
 
 (defun chatwork-me-callback (status)
   (unless (plist-get status :error)
