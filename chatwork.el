@@ -74,6 +74,13 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 		     (chatwork-find-room-id-by-room-name)))
   (chatwork-post-message message room-id))
 
+(defun chatwork-send-message-in-region (message room-id)
+  (interactive (let ((room-id (chatwork-find-room-id-by-room-name)))
+		 (list (buffer-substring-no-properties
+			(region-beginning) (region-end))
+		       room-id)))
+  (chatwork-post-message message room-id))
+
 (defun chatwork-post-message (message room-id)
   "Send MESSAGE to ROOM in ChatWork"
   (interactive)
