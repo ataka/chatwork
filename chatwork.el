@@ -20,6 +20,8 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 
 (defvar chatwork-me-plist nil)
 (defvar chatwork-rooms-plist nil)
+(defvar chatwork-rooms-alist nil
+  "Alist of Rooms which cons cell is `(ROOM_ID . ROOM_NAME)'")
 
 ;;; Connectivity
 
@@ -53,7 +55,13 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
       (unwind-protect
 	  (let ((json-data (progn (chatwork-callback-skip-header)
 				  (json-read))))
-	    (setq chatwork-rooms-plist json-data))
+	    (setq chatwork-rooms-plist json-data)
+	    (setq chatwork-rooms-alist
+		  (mapcar (lambda (room)
+			    (let ((room-id   (plist-get room :room_id))
+				  (room-name (plist-get room :name)))
+			      (cons room-id room-name)))
+			  chatwork-rooms-plist)))
 	(kill-buffer)))))
 
 (defun chatwork-callback-skip-header ()
