@@ -6,9 +6,14 @@ A client library of [ChatWork](http://www.chatwork.com/) for Emacs.
 
 ## Install ##
 
-### Get chatwork.el ###
+### Use Package System ###
 
-You can get the latest chatwork.el from Github.
+chatwork.el is available in MELPA.
+Please use MELPA with package system.  It is easiest way to get the latest chatwork.el.
+
+### From Github ###
+
+You can get the latest chatwork.el from Github, too.
 
 ```
 $ git clone https://github.com/ataka/chatwork.git
@@ -34,8 +39,7 @@ You can find your ChatWork API Token in API tab in Setting page in ChatWork.
 Put the following code into your `.emacs.d/init.el`
 
 ```elisp
-(require 'chatwork)
-(setq chatwork-token "YOUR TOKEN")
+(setq chatwork-token "YOUR CHATWORK API TOKEN")
 ```
 
 ## Usage ##
