@@ -106,11 +106,13 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 	   (room-name (completing-read "Room: " rooms)))
       (cdr (assoc room-name rooms))))
 
+;;;###autoload
 (defun chatwork-send-message (message room-id)
   (interactive (list (read-string "Message: ")
 		     (chatwork-find-room-id-by-room-name)))
   (chatwork-post-message message room-id))
 
+;;;###autoload
 (defun chatwork-send-message-in-region (message room-id)
   (interactive (let ((room-id (chatwork-find-room-id-by-room-name)))
 		 (list (buffer-substring-no-properties
