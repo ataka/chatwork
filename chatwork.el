@@ -111,7 +111,7 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
   (unless chatwork-rooms-alist
     (chatwork-update-rooms))
   (while (not chatwork-rooms-alist)
-    (sit-for 1)))
+    (sleep-for 1)))
 
 (defun chatwork-post-message (message room-id)
   "Send MESSAGE to ROOM in ChatWork"
