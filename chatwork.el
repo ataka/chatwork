@@ -109,12 +109,18 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 
 ;;;###autoload
 (defun chatwork-send-message (message room-id)
+  "Send MESSAGE to ROOM-ID
+
+ROOM-ID is an id number of the room."
   (interactive (list (read-string "Message: ")
 		     (chatwork-find-room-id-by-room-name)))
   (chatwork-post-message message room-id))
 
 ;;;###autoload
 (defun chatwork-send-message-in-region (beg end room-id)
+  "Send text in region to ROOM-ID
+
+ROOM-ID is an id number of the room."
   (interactive (let ((room-id (chatwork-find-room-id-by-room-name)))
 		 (list (region-beginning) (region-end) room-id)))
   (let ((message (buffer-substring-no-properties beg end)))
