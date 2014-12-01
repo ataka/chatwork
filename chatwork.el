@@ -4,6 +4,7 @@
 ;; Copyright (C) 2014 Masayuki Ataka <masayuki.ataka@gmail.com>
 
 ;; Author: Masayuki Ataka <masayuki.ataka@gmail.com>
+;; URL: https://github.com/ataka/chatwork
 ;; Keywords: web
 
 ;; This file is not part of GNU Emacs.
