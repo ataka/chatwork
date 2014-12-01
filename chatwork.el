@@ -114,12 +114,11 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
   (chatwork-post-message message room-id))
 
 ;;;###autoload
-(defun chatwork-send-message-in-region (message room-id)
+(defun chatwork-send-message-in-region (beg end room-id)
   (interactive (let ((room-id (chatwork-find-room-id-by-room-name)))
-		 (list (buffer-substring-no-properties
-			(region-beginning) (region-end))
-		       room-id)))
-  (chatwork-post-message message room-id))
+		 (list (region-beginning) (region-end) room-id)))
+  (let ((message (buffer-substring-no-properties beg end)))
+    (chatwork-post-message message room-id)))
 
 (defun chatwork-ensure-rooms-alist ()
   (unless chatwork-rooms-alist
