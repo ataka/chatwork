@@ -26,6 +26,16 @@
 
 ;;; Commentary:
 
+;; chatwork.el provides some commands for ChatWork service.
+
+;; Set your ChatWork API token, which you can get from
+;; https://www.chatwork.com/service/packages/chatwork/subpackages/api/apply_beta.php
+;;
+;; Example:
+;;
+;;  (setq chatwork-token "YOUR CHATWORK API TOKEN")
+;;
+
 ;;; Code:
 
 (require 'url)
