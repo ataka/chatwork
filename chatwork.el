@@ -104,7 +104,7 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 
 (defun chatwork-find-room-id-by-room-name ()
     (let* ((rooms (progn (chatwork-ensure-rooms-alist) chatwork-rooms-alist))
-	   (room-name (completing-read "Room: " rooms)))
+	   (room-name (let ((completion-ignore-case t)) (completing-read "Room: " rooms))))
       (cdr (assoc room-name rooms))))
 
 ;;;###autoload
