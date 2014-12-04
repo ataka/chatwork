@@ -57,7 +57,7 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 (defvar chatwork-me-plist nil)
 (defvar chatwork-rooms-plist nil)
 (defvar chatwork-rooms-alist nil
-  "Alist of Rooms which cons cell is `(ROOM_ID . ROOM_NAME)'")
+  "Alist of Rooms which cons cell is `(ROOM_NAME . ROOM_ID)'")
 
 ;;; Connectivity
 
