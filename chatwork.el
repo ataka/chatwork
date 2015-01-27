@@ -1,7 +1,7 @@
 ;;; chatwork.el --- ChatWork client for Emacs
 ;; -*- Mode: Emacs-Lisp -*-
 
-;; Copyright (C) 2014 Masayuki Ataka <masayuki.ataka@gmail.com>
+;; Copyright (C) 2014, 2015 Masayuki Ataka <masayuki.ataka@gmail.com>
 
 ;; Author: Masayuki Ataka <masayuki.ataka@gmail.com>
 ;; URL: https://github.com/ataka/chatwork
