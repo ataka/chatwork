@@ -58,6 +58,8 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 (defvar chatwork-rooms-plist nil)
 (defvar chatwork-rooms-alist nil
   "Alist of Rooms which cons cell is `(ROOM_NAME . ROOM_ID)'")
+(defvar chatwork-room-member-alist nil ; FIXME
+  "Alist of Room member which cons cell is `(\"alias\" . \"[To:NNNN] Name\")'")
 
 ;;; Connectivity
 
@@ -175,9 +177,14 @@ ROOM-ID is an id number of the room."
 (defun chatwork-concat-heading-space (str)
   (concat (when str " ") str))
 
-(defun chatwork-insert-tag-to (to)
-  (interactive "sTo: ")
-  (chatwork-insert-tag "To" (concat ":" to) nil "Name"))
+;; FIXME
+;;
+;; (defun chatwork-insert-tag-to (to)
+;;   (interactive "sTo: ")
+;;   (chatwork-insert-tag "To" (concat ":" to) nil "Name"))
+(defun chatwork-insert-tag-to (momber)
+  (interactive (list (completing-read "To: " chatwork-room-member-alist)))
+  (insert (format "%s\n" (cdr (assoc member chatwork-room-member-alist)))))
 
 (defun chatwork-insert-tag-info ()
   (interactive)
