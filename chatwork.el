@@ -182,7 +182,7 @@ ROOM-ID is an id number of the room."
 ;; (defun chatwork-insert-tag-to (to)
 ;;   (interactive "sTo: ")
 ;;   (chatwork-insert-tag "To" (concat ":" to) nil "Name"))
-(defun chatwork-insert-tag-to (momber)
+(defun chatwork-insert-tag-to (member)
   (interactive (list (completing-read "To: " chatwork-room-member-alist)))
   (insert (format "%s\n" (cdr (assoc member chatwork-room-member-alist)))))
 
