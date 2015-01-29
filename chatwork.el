@@ -160,6 +160,7 @@ ROOM-ID is an id number of the room."
 ;; [qt][qtmeta aid={account_id} time={timestamp}] ... [/qt]
 ;; [info] ... [/info]
 ;; [info][title]title[/title] ... [/info]
+;; [code] ... [/code]
 ;; [hr]
 ;; [picon:{account_id}]
 ;; [piconname:{account_id}]
@@ -197,6 +198,10 @@ ROOM-ID is an id number of the room."
     (chatwork-insert-tag "title" nil t)
     (insert title))
   (search-forward "[/title]" nil t))
+
+(defun chatwork-insert-tag-code ()
+  (interactive)
+  (chatwork-insert-tag "code" nil t))
 
 (defun chatwork-insert-tag-hr ()
   (interactive)
