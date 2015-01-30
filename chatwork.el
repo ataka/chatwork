@@ -58,6 +58,7 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 (defvar chatwork-rooms-plist nil)
 (defvar chatwork-rooms-alist nil
   "Alist of Rooms which cons cell is `(ROOM_NAME . ROOM_ID)'")
+(defvar chatwork-room-history nil)
 (defvar chatwork-room-member-alist nil ; FIXME
   "Alist of Room member which cons cell is `(\"alias\" . \"[To:NNNN] Name\")'")
 
@@ -106,7 +107,7 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 
 (defun chatwork-find-room-id-by-room-name ()
     (let* ((rooms (progn (chatwork-ensure-rooms-alist) chatwork-rooms-alist))
-	   (room-name (let ((completion-ignore-case t)) (completing-read "Room: " rooms))))
+	   (room-name (let ((completion-ignore-case t)) (completing-read "Room: " rooms nil nil nil 'chatwork-room-history (car chatwork-room-history)))))
       (cdr (assoc room-name rooms))))
 
 ;;;###autoload
