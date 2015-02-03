@@ -200,9 +200,12 @@ ROOM-ID is an id number of the room."
     (insert title))
   (search-forward "[/title]" nil t))
 
-(defun chatwork-insert-tag-code ()
-  (interactive)
-  (chatwork-insert-tag "code" nil t))
+(define-skeleton chatwork-insert-tag-code
+  "Insert tag tag."
+  > "[code] \n"
+  _
+  "\n[/code] \n"
+)
 
 (defun chatwork-insert-tag-hr ()
   (interactive)
