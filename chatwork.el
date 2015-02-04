@@ -202,9 +202,9 @@ ROOM-ID is an id number of the room."
 
 (define-skeleton chatwork-insert-tag-code
   "Insert tag tag."
-  > "[code] \n"
+  > "[code]\n"
   _
-  "\n[/code] \n"
+  "\n[/code]\n"
 )
 
 (defun chatwork-insert-tag-hr ()
