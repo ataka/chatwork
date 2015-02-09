@@ -151,6 +151,36 @@ ROOM-ID is an id number of the room."
 (defun chatwork-callback-skip-header ()
   (search-forward "\n\n" nil t))
 
+;;; ChatWork mode
+
+(defvar chatwork-buffer "*chatwork*")
+
+;;;###autoload
+(defun chatwork ()
+  "Call Chatwork major mode"
+  (interactive)
+  (pop-to-buffer chatwork-buffer)
+  (chatwork-mode))
+
+(defun chatwork-mode ()
+  (interactive)
+  (setq major-mode 'chatwork-mode
+	mode-name  "ChatWork")
+  (use-local-map chatwork-mode-map)
+  (run-hooks 'chatwork-mode-hook))
+
+;;
+;; key map
+;;
+(defvar chatwork-mode-map nil)
+(unless chatwork-mode-map
+  (let ((map (make-keymap)))
+    (define-key map "\C-c\C-r" 'chatwork-send-message-in-region)
+    ;; Tag
+    (define-key map "\C-c\C-i\C-t" 'chatwork-insert-tag-to)
+    (setq chatwork-mode-map map)))
+
+
 ;;; Tag
 
 ;; [To:{account_id}] Name
