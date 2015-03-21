@@ -61,6 +61,8 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 (defvar chatwork-room-history nil)
 (defvar chatwork-room-member-alist nil ; FIXME
   "Alist of Room member which cons cell is `(\"alias\" . \"[To:NNNN] Name\")'")
+(defvar chatwork-stamp-alist nil
+  "Alist of Stamp whic cons cell is `(\"alias\" . \"Stamp strings\")'")
 
 ;;; Connectivity
 
@@ -128,6 +130,16 @@ ROOM-ID is an id number of the room."
 		 (list (region-beginning) (region-end) room-id)))
   (let ((message (buffer-substring-no-properties beg end)))
     (chatwork-post-message message room-id)))
+
+(defun chatwork-send-stamp (stamp room-id)
+  "Send STAMP to ROOM-ID
+
+STAMP is car of cons cell in `chatwork-stamp-alist'.
+ROOM-ID is an ad number of the room."
+  (interactive (list (completing-read "Stamp: " chatwork-stamp-alist)
+                     (chatwork-find-room-id-by-room-name)))
+  (chatwork-post-message (cdr (assoc stamp chatwork-stamp-alist))
+                         room-id))
 
 (defun chatwork-ensure-rooms-alist ()
   (unless chatwork-rooms-alist
