@@ -44,9 +44,14 @@
 
 ;;; Custom Variables
 
-;; FIXME: Use defcustom
+(defgroup chatwork nil
+  "ChatWork configuration."
+  :group 'comm)
 
-(defvar chatwork-token nil)
+(defcustom chatwork-token nil
+  "ChatWork API Token."
+  :type 'string
+  :group 'chatwork)
 
 ;; Vars
 
