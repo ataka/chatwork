@@ -162,6 +162,14 @@ ROOM-ID is an ad number of the room."
     (url-retrieve (chatwork-api-url (format "/rooms/%d/messages" room-id))
 		  'chatwork-post-callback)))
 
+(defmacro chatwork-post (path data)
+  `(let ((url-request-method "POST")
+	(url-request-extra-headers (("Content-Type" . "application/x-www-form-urlencoded")
+				    ("X-ChatWorkToken" . ,chatwork-token)))
+	(url-request-data ,data))
+     (url-retrieve (chatwork-api-url ,data)
+		   'chatwork-post-callback)))
+
 (defun chatwork-post-callback (status)
   (set-buffer (current-buffer))
   (unwind-protect
