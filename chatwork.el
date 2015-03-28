@@ -152,12 +152,6 @@ ROOM-ID is an ad number of the room."
   (while (not chatwork-rooms-alist)
     (sleep-for 1)))
 
-(defun chatwork-post-message (message room-id)
-  "Send MESSAGE to ROOM in ChatWork"
-  (interactive)
-  (chatwork-post (format "/rooms/%d/messages" room-id)
-                 (concat "body=" (url-hexify-string message))))
-
 (defmacro chatwork-post (path data)
   `(let ((url-request-method "POST")
          (url-request-extra-headers `(("Content-Type" . "application/x-www-form-urlencoded")
@@ -165,6 +159,12 @@ ROOM-ID is an ad number of the room."
          (url-request-data ,data))
      (url-retrieve (chatwork-api-url ,path)
                    'chatwork-post-callback)))
+
+(defun chatwork-post-message (message room-id)
+  "Send MESSAGE to ROOM in ChatWork"
+  (interactive)
+  (chatwork-post (format "/rooms/%d/messages" room-id)
+                 (concat "body=" (url-hexify-string message))))
 
 (defun chatwork-post-callback (status)
   (set-buffer (current-buffer))
