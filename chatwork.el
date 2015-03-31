@@ -153,6 +153,10 @@ ROOM-ID is an ad number of the room."
     (sleep-for 1)))
 
 (defmacro chatwork-post (path data)
+  "Send POST request to ChatWork
+
+PATH should start with \"/\".
+DATA should be decoded with `html-hexify-string' if they contains multibyte."
   `(let ((url-request-method "POST")
          (url-request-extra-headers `(("Content-Type" . "application/x-www-form-urlencoded")
                                       ("X-ChatWorkToken" . ,chatwork-token)))
