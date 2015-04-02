@@ -68,6 +68,7 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
   "Alist of Room member which cons cell is `(\"alias\" . \"[To:NNNN] Name\")'")
 (defvar chatwork-stamp-alist nil
   "Alist of Stamp whic cons cell is `(\"alias\" . \"Stamp strings\")'")
+(defvar chatwork-page-delimiter (substring page-delimiter 1 2))
 
 ;;; Connectivity
 
@@ -112,10 +113,11 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 			  chatwork-rooms-plist)))
 	(kill-buffer)))))
 
-(defun chatwork-find-room-id-by-room-name ()
-    (let* ((rooms (progn (chatwork-ensure-rooms-alist) chatwork-rooms-alist))
-	   (room-name (let ((completion-ignore-case t)) (completing-read "Room: " rooms nil nil nil 'chatwork-room-history (car chatwork-room-history)))))
-      (cdr (assoc room-name rooms))))
+(defun chatwork-find-room-id-by-room-name (&optional room-name)
+  (let* ((rooms (progn (chatwork-ensure-rooms-alist) chatwork-rooms-alist)))
+    (unless room-name
+      (setq room-name (let ((completion-ignore-case t)) (completing-read "Room: " rooms nil nil nil 'chatwork-room-history (car chatwork-room-history)))))
+    (cdr (assoc room-name rooms))))
 
 ;;;###autoload
 (defun chatwork-send-message (message room-id)
@@ -131,10 +133,24 @@ ROOM-ID is an id number of the room."
   "Send text in region to ROOM-ID
 
 ROOM-ID is an id number of the room."
-  (interactive (let ((room-id (chatwork-find-room-id-by-room-name)))
+  (interactive (let ((room-id (chatwork-find-room-id-by-room-name chatwork-room-name)))
 		 (list (region-beginning) (region-end) room-id)))
   (let ((message (buffer-substring-no-properties beg end)))
     (chatwork-post-message message room-id)))
+
+
+(defun chatwork-send-message-in-page (room-id)
+  "Send text in page to ROOM-ID
+
+ROOM-ID is an id number of the room."
+  (interactive (let ((room-id (chatwork-find-room-id-by-room-name chatwork-room-name)))
+		 (list room-id)))
+  (let* ((beg (progn (backward-page) (point)))
+	 (end (progn (forward-page) (skip-chars-backward chatwork-page-delimiter) (point)))
+	 (message (buffer-substring-no-properties beg end)))
+    (chatwork-post-message message room-id))
+  (goto-char (point-max))
+  (insert "\n" chatwork-page-delimiter))
 
 (defun chatwork-send-stamp (stamp room-id)
   "Send STAMP to ROOM-ID
@@ -178,6 +194,53 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 
 (defun chatwork-callback-skip-header ()
   (search-forward "\n\n" nil t))
+
+;;; ChatWork mode
+
+(defvar chatwork-buffer-base-name "*chatwork*")
+(defvar chatwork-buffer-name nil)
+(make-variable-buffer-local 'chatwork-buffer-name)
+(defvar chatwork-room-name nil)
+(make-variable-buffer-local 'chatwork-room-name)
+
+;;;###autoload
+(defun chatwork ()
+  "Call Chatwork major mode"
+  (interactive)
+  (let* ((room-name (chatwork-select-room))
+	 (buffer-name (format "%s<%s>" chatwork-buffer-base-name room-name)))
+    (pop-to-buffer buffer-name)
+    (setq chatwork-room-name room-name
+	  chatwork-buffer-name buffer-name)
+    (chatwork-mode)))
+
+(defun chatwork-mode ()
+  (interactive)
+  (setq major-mode 'chatwork-mode
+	mode-name  "ChatWork")
+  (use-local-map chatwork-mode-map)
+  (run-hooks 'chatwork-mode-hook))
+
+(defun chatwork-select-room ()
+  (let* ((rooms (progn (chatwork-ensure-rooms-alist) chatwork-rooms-alist))
+	 (room-name (let ((completion-ignore-case t)) (completing-read "Room: " rooms nil nil nil 'chatwork-room-history (car chatwork-room-history)))))
+    room-name))
+
+(defun chatwork-buffer ()
+  (concat chatwork-buffer-base-name chatwork-room-name))
+
+;;
+;; key map
+;;
+(defvar chatwork-mode-map nil)
+(unless chatwork-mode-map
+  (let ((map (make-keymap)))
+    (define-key map "\C-c\C-c" 'chatwork-send-message-in-page)
+    (define-key map "\C-c\C-r" 'chatwork-send-message-in-region)
+    ;; Tag
+    (define-key map "\C-c\C-i\C-t" 'chatwork-insert-tag-to)
+    (setq chatwork-mode-map map)))
+
 
 ;;; Tag
 
