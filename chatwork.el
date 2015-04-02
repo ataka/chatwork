@@ -129,6 +129,9 @@ ROOM-ID is an id number of the room."
     (chatwork-post-message message room-id)))
 
 (defun chatwork-send-message-in-page (room-id)
+  "Send text in page to ROOM-ID
+
+ROOM-ID is an id number of the room."
   (interactive (let ((room-id (chatwork-find-room-id-by-room-name chatwork-room-name)))
 		 (list room-id)))
   (let* ((beg (progn (backward-page) (point)))
