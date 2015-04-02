@@ -102,10 +102,11 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 			  chatwork-rooms-plist)))
 	(kill-buffer)))))
 
-(defun chatwork-find-room-id-by-room-name ()
-    (let* ((rooms (progn (chatwork-ensure-rooms-alist) chatwork-rooms-alist))
-	   (room-name (let ((completion-ignore-case t)) (completing-read "Room: " rooms))))
-      (cdr (assoc room-name rooms))))
+(defun chatwork-find-room-id-by-room-name (&optional room-name)
+  (let* ((rooms (progn (chatwork-ensure-rooms-alist) chatwork-rooms-alist)))
+    (unless room-name
+      (setq room-name (let ((completion-ignore-case t)) (completing-read "Room: " rooms))))
+    (cdr (assoc room-name rooms))))
 
 ;;;###autoload
 (defun chatwork-send-message (message room-id)
@@ -121,10 +122,20 @@ ROOM-ID is an id number of the room."
   "Send text in region to ROOM-ID
 
 ROOM-ID is an id number of the room."
-  (interactive (let ((room-id (chatwork-find-room-id-by-room-name)))
+  (interactive (let ((room-id (chatwork-find-room-id-by-room-name chatwork-room-name)))
 		 (list (region-beginning) (region-end) room-id)))
   (let ((message (buffer-substring-no-properties beg end)))
     (chatwork-post-message message room-id)))
+
+(defun chatwork-send-message-in-page (room-id)
+  (interactive (let ((room-id (chatwork-find-room-id-by-room-name chatwork-room-name)))
+		 (list room-id)))
+  (let* ((beg (progn (backward-page) (point)))
+	 (end (progn (forward-page) (skip-chars-backward "") (point)))
+	 (message (buffer-substring-no-properties beg end)))
+    (chatwork-post-message message room-id))
+  (goto-char (point-max))
+  (insert "\n"))
 
 (defun chatwork-ensure-rooms-alist ()
   (unless chatwork-rooms-alist
@@ -153,14 +164,22 @@ ROOM-ID is an id number of the room."
 
 ;;; ChatWork mode
 
-(defvar chatwork-buffer "*chatwork*")
+(defvar chatwork-buffer-base-name "*chatwork*")
+(defvar chatwork-buffer-name nil)
+(make-variable-buffer-local 'chatwork-buffer-name)
+(defvar chatwork-room-name nil)
+(make-variable-buffer-local 'chatwork-room-name)
 
 ;;;###autoload
 (defun chatwork ()
   "Call Chatwork major mode"
   (interactive)
-  (pop-to-buffer chatwork-buffer)
-  (chatwork-mode))
+  (let* ((room-name (chatwork-select-room))
+	 (buffer-name (format "%s<%s>" chatwork-buffer-base-name room-name)))
+    (pop-to-buffer buffer-name)
+    (setq chatwork-room-name room-name
+	  chatwork-buffer-name buffer-name)
+    (chatwork-mode)))
 
 (defun chatwork-mode ()
   (interactive)
@@ -169,12 +188,21 @@ ROOM-ID is an id number of the room."
   (use-local-map chatwork-mode-map)
   (run-hooks 'chatwork-mode-hook))
 
+(defun chatwork-select-room ()
+  (let* ((rooms (progn (chatwork-ensure-rooms-alist) chatwork-rooms-alist))
+	 (room-name (let ((completion-ignore-case t)) (completing-read "Room: " rooms))))
+    room-name))
+
+(defun chatwork-buffer ()
+  (concat chatwork-buffer-base-name chatwork-room-name))
+
 ;;
 ;; key map
 ;;
 (defvar chatwork-mode-map nil)
 (unless chatwork-mode-map
   (let ((map (make-keymap)))
+    (define-key map "\C-c\C-c" 'chatwork-send-message-in-page)
     (define-key map "\C-c\C-r" 'chatwork-send-message-in-region)
     ;; Tag
     (define-key map "\C-c\C-i\C-t" 'chatwork-insert-tag-to)
