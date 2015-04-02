@@ -58,6 +58,7 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 (defvar chatwork-rooms-plist nil)
 (defvar chatwork-rooms-alist nil
   "Alist of Rooms which cons cell is `(ROOM_NAME . ROOM_ID)'")
+(defvar chatwork-page-delimiter (substring page-delimiter 1 2))
 
 ;;; Connectivity
 
@@ -131,11 +132,11 @@ ROOM-ID is an id number of the room."
   (interactive (let ((room-id (chatwork-find-room-id-by-room-name chatwork-room-name)))
 		 (list room-id)))
   (let* ((beg (progn (backward-page) (point)))
-	 (end (progn (forward-page) (skip-chars-backward "") (point)))
+	 (end (progn (forward-page) (skip-chars-backward chatwork-page-delimiter) (point)))
 	 (message (buffer-substring-no-properties beg end)))
     (chatwork-post-message message room-id))
   (goto-char (point-max))
-  (insert "\n"))
+  (insert "\n" chatwork-page-delimiter))
 
 (defun chatwork-ensure-rooms-alist ()
   (unless chatwork-rooms-alist
