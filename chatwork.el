@@ -239,6 +239,9 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
     (define-key map "\C-c\C-r" 'chatwork-send-message-in-region)
     ;; Tag
     (define-key map "\C-c\C-i\C-t" 'chatwork-insert-tag-to)
+    (define-key map "\C-c\C-i\C-i" 'chatwork-insert-tag-info)
+    (define-key map "\C-c\C-i\C-c" 'chatwork-insert-tag-code)
+    (define-key map "\C-c\C-i\C-h" 'chatwork-insert-tag-hr)
     (setq chatwork-mode-map map)))
 
 
