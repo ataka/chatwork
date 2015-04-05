@@ -120,6 +120,22 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
     (cdr (assoc room-name rooms))))
 
 ;;;###autoload
+(defun chatwork-send-message-at-point ()
+  "Send message to ChatWork
+
+Call `chatwork-send-message-in-page', if chatwork-mode and mark is not active.
+Call `chatwork-send-message-in-region', if mark is active.
+Call `chatwork-send-message', if mark is not active and not chatwork-mode."
+  (interactive)
+  (cond
+   ((and (eq major-mode 'chatwork-mode) chatwork-room-name (not mark-active))
+    (call-interactively 'chatwork-send-message-in-page))
+   (mark-active
+    (call-interactively 'chatwork-send-message-in-region))
+   (t
+    (call-interactively 'chatwork-send-message))))
+
+;;;###autoload
 (defun chatwork-send-message (message room-id)
   "Send MESSAGE to ROOM-ID
 
@@ -137,7 +153,6 @@ ROOM-ID is an id number of the room."
 		 (list (region-beginning) (region-end) room-id)))
   (let ((message (buffer-substring-no-properties beg end)))
     (chatwork-post-message message room-id)))
-
 
 (defun chatwork-send-message-in-page (room-id)
   "Send text in page to ROOM-ID
@@ -235,8 +250,7 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 (defvar chatwork-mode-map nil)
 (unless chatwork-mode-map
   (let ((map (make-keymap)))
-    (define-key map "\C-c\C-c" 'chatwork-send-message-in-page)
-    (define-key map "\C-c\C-r" 'chatwork-send-message-in-region)
+    (define-key map "\C-c\C-c" 'chatwork-send-message-at-point)
     ;; Tag
     (define-key map "\C-c\C-i\C-t" 'chatwork-insert-tag-to)
     (define-key map "\C-c\C-i\C-i" 'chatwork-insert-tag-info)
