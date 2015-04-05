@@ -212,7 +212,7 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 
 ;;; ChatWork mode
 
-(defvar chatwork-buffer-base-name "*chatwork*")
+(defvar chatwork-buffer-name-format "*chatwork :%s*")
 (defvar chatwork-buffer-name nil)
 (make-variable-buffer-local 'chatwork-buffer-name)
 (defvar chatwork-room-name nil)
@@ -223,7 +223,7 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
   "Call Chatwork major mode"
   (interactive)
   (let* ((room-name (chatwork-select-room))
-	 (buffer-name (format "%s<%s>" chatwork-buffer-base-name room-name)))
+	 (buffer-name (format chatwork-buffer-name-format room-name)))
     (pop-to-buffer buffer-name)
     (setq chatwork-room-name room-name
 	  chatwork-buffer-name buffer-name)
