@@ -225,7 +225,7 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
   "Call Chatwork major mode"
   (interactive)
   (let* ((room-name (chatwork-select-room))
-	 (buffer-name (format chatwork-buffer-name-format room-name)))
+	 (buffer-name (chatwork-buffer room-name)))
     (pop-to-buffer buffer-name)
     (setq chatwork-room-name room-name
 	  chatwork-buffer-name buffer-name)
@@ -243,8 +243,8 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 	 (room-name (let ((completion-ignore-case t)) (completing-read "Room: " rooms nil nil nil 'chatwork-room-history (car chatwork-room-history)))))
     room-name))
 
-(defun chatwork-buffer ()
-  (concat chatwork-buffer-base-name chatwork-room-name))
+(defun chatwork-buffer (room-name)
+  (format chatwork-buffer-name-format room-name))
 
 ;;
 ;; key map
