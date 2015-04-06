@@ -212,7 +212,7 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 
 ;;; ChatWork mode
 
-(defvar chatwork-buffer-name-format "*chatwork :%s*")
+(defvar chatwork-buffer-name-format "*chatwork: %s*")
 (defvar chatwork-buffer-name nil)
 (make-variable-buffer-local 'chatwork-buffer-name)
 (defvar chatwork-room-name nil)
