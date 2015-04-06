@@ -53,7 +53,7 @@
   :type 'string
   :group 'chatwork)
 
-;; Vars
+;; System Variables
 
 (defconst chatwork-api-base-url "https://api.chatwork.com/v1"
   "Base URL of ChatWork API.
@@ -69,6 +69,14 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 (defvar chatwork-stamp-alist nil
   "Alist of Stamp whic cons cell is `(\"alias\" . \"Stamp strings\")'")
 (defvar chatwork-page-delimiter (substring page-delimiter 1 2))
+
+;; System Variables for chatwork-mode
+
+(defvar chatwork-buffer-name-format "*chatwork: %s*")
+(defvar chatwork-buffer-name nil)
+(make-variable-buffer-local 'chatwork-buffer-name)
+(defvar chatwork-room-name nil)
+(make-variable-buffer-local 'chatwork-room-name)
 
 ;;; Connectivity
 
@@ -211,12 +219,6 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
   (search-forward "\n\n" nil t))
 
 ;;; ChatWork mode
-
-(defvar chatwork-buffer-name-format "*chatwork: %s*")
-(defvar chatwork-buffer-name nil)
-(make-variable-buffer-local 'chatwork-buffer-name)
-(defvar chatwork-room-name nil)
-(make-variable-buffer-local 'chatwork-room-name)
 
 ;;;###autoload
 (defun chatwork ()
