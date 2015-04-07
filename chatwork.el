@@ -181,7 +181,7 @@ ROOM-ID is an id number of the room."
 STAMP is car of cons cell in `chatwork-stamp-alist'.
 ROOM-ID is an ad number of the room."
   (interactive (list (completing-read "Stamp: " chatwork-stamp-alist)
-                     (chatwork-find-room-id-by-room-name)))
+		     (chatwork-find-room-id-by-room-name chatwork-room-name)))
   (chatwork-post-message (cdr (assoc stamp chatwork-stamp-alist))
                          room-id))
 
@@ -232,6 +232,7 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
     (define-key map "\C-c\C-i\C-i" 'chatwork-insert-tag-info)
     (define-key map "\C-c\C-i\C-c" 'chatwork-insert-tag-code)
     (define-key map "\C-c\C-i\C-h" 'chatwork-insert-tag-hr)
+    (define-key map "\C-c\C-i\C-s" 'chatwork-send-stamp)
     (setq chatwork-mode-map map)))
 
 ;;;###autoload
