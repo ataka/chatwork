@@ -68,7 +68,7 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
   "Alist of Room member which cons cell is `(\"alias\" . \"[To:NNNN] Name\")'")
 (defvar chatwork-stamp-alist nil
   "Alist of Stamp whic cons cell is `(\"alias\" . \"Stamp strings\")'")
-(defvar chatwork-page-delimiter (substring page-delimiter 1 2))
+(defvar chatwork-page-delimiter "\014")
 
 ;; System Variables for chatwork-mode
 
@@ -168,7 +168,8 @@ ROOM-ID is an id number of the room."
 ROOM-ID is an id number of the room."
   (interactive (let ((room-id (chatwork-find-room-id-by-room-name chatwork-room-name)))
                  (list room-id)))
-  (let* ((beg (progn (backward-page) (point)))
+  (let* ((page-delimiter (concat "^" chatwork-page-delimiter))
+	 (beg (progn (backward-page) (point)))
          (end (progn (forward-page) (skip-chars-backward chatwork-page-delimiter) (point)))
          (message (buffer-substring-no-properties beg end)))
     (chatwork-post-message message room-id))
