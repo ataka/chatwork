@@ -220,6 +220,20 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 
 ;;; ChatWork mode
 
+;;
+;; key map
+;;
+(defvar chatwork-mode-map nil)
+(unless chatwork-mode-map
+  (let ((map (make-keymap)))
+    (define-key map "\C-c\C-c" 'chatwork-send-message-at-point)
+    ;; Tag
+    (define-key map "\C-c\C-i\C-t" 'chatwork-insert-tag-to)
+    (define-key map "\C-c\C-i\C-i" 'chatwork-insert-tag-info)
+    (define-key map "\C-c\C-i\C-c" 'chatwork-insert-tag-code)
+    (define-key map "\C-c\C-i\C-h" 'chatwork-insert-tag-hr)
+    (setq chatwork-mode-map map)))
+
 ;;;###autoload
 (defun chatwork ()
   "Call Chatwork major mode"
@@ -245,21 +259,6 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 
 (defun chatwork-buffer (room-name)
   (format chatwork-buffer-name-format room-name))
-
-;;
-;; key map
-;;
-(defvar chatwork-mode-map nil)
-(unless chatwork-mode-map
-  (let ((map (make-keymap)))
-    (define-key map "\C-c\C-c" 'chatwork-send-message-at-point)
-    ;; Tag
-    (define-key map "\C-c\C-i\C-t" 'chatwork-insert-tag-to)
-    (define-key map "\C-c\C-i\C-i" 'chatwork-insert-tag-info)
-    (define-key map "\C-c\C-i\C-c" 'chatwork-insert-tag-code)
-    (define-key map "\C-c\C-i\C-h" 'chatwork-insert-tag-hr)
-    (setq chatwork-mode-map map)))
-
 
 ;;; Tag
 
