@@ -228,6 +228,7 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 (unless chatwork-mode-map
   (let ((map (make-keymap)))
     (define-key map "\C-c\C-c" 'chatwork-send-message-at-point)
+    (define-key map "\C-c\C-b" 'chatwork-switch-to-room)
     ;; Tag
     (define-key map "\C-c\C-i\C-t" 'chatwork-insert-tag-to)
     (define-key map "\C-c\C-i\C-i" 'chatwork-insert-tag-info)
@@ -262,6 +263,19 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 
 (defun chatwork-buffer (room-name)
   (format chatwork-buffer-name-format room-name))
+
+(defun chatwork-switch-to-room (room-name)
+  "Display room ROOM-NAME in the selected window"
+  (interactive (list (let ((completion-ignore-case t)
+			   (active-rooms
+			    (delq nil (mapcar
+				       (lambda (buf)
+					 (let ((name (buffer-name buf)))
+					   (when (string-match "\\*chatwork: \\(.+\\)\\*" name)
+					     (match-string-no-properties 1 name))))
+				       (buffer-list)))))
+		       (completing-read "Room: " active-rooms nil nil nil 'chatwork-room-history (car chatwork-room-history)))))
+  (switch-to-buffer (chatwork-buffer room-name)))
 
 (defun chatwork-electric-backquote ()
   "Insert code tag if line begin with ```"
