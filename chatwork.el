@@ -234,6 +234,7 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
     (define-key map "\C-c\C-i\C-c" 'chatwork-insert-tag-code)
     (define-key map "\C-c\C-i\C-h" 'chatwork-insert-tag-hr)
     (define-key map "\C-c\C-i\C-s" 'chatwork-send-stamp)
+    (define-key map "`" 'chatwork-electric-backquote)
     (setq chatwork-mode-map map)))
 
 ;;;###autoload
@@ -261,6 +262,13 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 
 (defun chatwork-buffer (room-name)
   (format chatwork-buffer-name-format room-name))
+
+(defun chatwork-electric-backquote ()
+  (interactive)
+  (if (looking-back "^``")
+      (progn (delete-region (point) (progn (beginning-of-line) (point)))
+	     (chatwork-insert-tag-code))
+    (call-interactively 'self-insert-command)))
 
 ;;; Tag
 
