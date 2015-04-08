@@ -264,6 +264,7 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
   (format chatwork-buffer-name-format room-name))
 
 (defun chatwork-electric-backquote ()
+  "Insert code tag if line begin with ```"
   (interactive)
   (if (looking-back "^``")
       (progn (delete-region (point) (progn (beginning-of-line) (point)))
