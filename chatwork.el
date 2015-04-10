@@ -77,6 +77,8 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 (make-variable-buffer-local 'chatwork-buffer-name)
 (defvar chatwork-room-name nil)
 (make-variable-buffer-local 'chatwork-room-name)
+(defvar chatwork-room-info nil)
+(make-variable-buffer-local 'chatwork-room-info)
 
 ;;; Connectivity
 
