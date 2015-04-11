@@ -223,23 +223,6 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 
 ;;; ChatWork mode
 
-;;
-;; key map
-;;
-(defvar chatwork-mode-map nil)
-(unless chatwork-mode-map
-  (let ((map (make-keymap)))
-    (define-key map "\C-c\C-c" 'chatwork-send-message-at-point)
-    (define-key map "\C-c\C-b" 'chatwork-switch-to-room)
-    ;; Tag
-    (define-key map "\C-c\C-i\C-t" 'chatwork-insert-tag-to)
-    (define-key map "\C-c\C-i\C-i" 'chatwork-insert-tag-info)
-    (define-key map "\C-c\C-i\C-c" 'chatwork-insert-tag-code)
-    (define-key map "\C-c\C-i\C-h" 'chatwork-insert-tag-hr)
-    (define-key map "\C-c\C-i\C-s" 'chatwork-send-stamp)
-    (define-key map "`" 'chatwork-electric-backquote)
-    (setq chatwork-mode-map map)))
-
 ;;;###autoload
 (defun chatwork ()
   "Call Chatwork major mode"
@@ -247,16 +230,36 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
   (let* ((room-name (chatwork-select-room))
          (buffer-name (chatwork-buffer room-name)))
     (pop-to-buffer buffer-name)
+    (chatwork-mode)
     (setq chatwork-room-name room-name
-          chatwork-buffer-name buffer-name)
-    (chatwork-mode)))
+          chatwork-buffer-name buffer-name)))
 
-(defun chatwork-mode ()
-  (interactive)
-  (setq major-mode 'chatwork-mode
-        mode-name  "ChatWork")
-  (use-local-map chatwork-mode-map)
-  (run-hooks 'chatwork-mode-hook))
+(define-derived-mode chatwork-mode
+  text-mode "ChatWork"
+  "Major mode for ChatWork.
+
+\\{chatwork-mode-map}"
+)
+
+;;
+;; key map
+;;
+
+(let ((map chatwork-mode-map))
+  (define-key map "\C-c\C-c" 'chatwork-send-message-at-point)
+  (define-key map "\C-c\C-b" 'chatwork-switch-to-room)
+  ;; Tag
+  (define-key map "\C-c\C-i\C-t" 'chatwork-insert-tag-to)
+  (define-key map "\C-c\C-i\C-i" 'chatwork-insert-tag-info)
+  (define-key map "\C-c\C-i\C-c" 'chatwork-insert-tag-code)
+  (define-key map "\C-c\C-i\C-h" 'chatwork-insert-tag-hr)
+  (define-key map "\C-c\C-i\C-s" 'chatwork-send-stamp)
+  (define-key map "`" 'chatwork-electric-backquote)
+)
+
+;;
+;; Functions for chatwork-mode
+;;
 
 (defun chatwork-select-room ()
   (let* ((rooms (progn (chatwork-ensure-rooms-alist) chatwork-rooms-alist))
