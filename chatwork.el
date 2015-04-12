@@ -86,9 +86,17 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
   "Return URL for ChatWork API with `chatwork-api-base-url' and ENDPOINT"
   (concat chatwork-api-base-url endpoint))
 
+(defmacro chatwork-get (path callback)
+  "Send GET request to ChatWork
+
+PATH sould start with \"/\".
+CALLBACK sould be a callback function"
+  `(let ((url-request-method "GET")
+         (url-request-extra-headers `(("X-ChatWorkToken" . ,chatwork-token))))
+     (url-retrieve (chatwork-api-url ,path) ,callback nil t)))
+
 (defun chatwork-me ()
-  (let ((url-request-extra-headers `(("X-ChatWorkToken" . ,chatwork-token))))
-    (url-retrieve (chatwork-api-url "/me") 'chatwork-me-callback nil t)))
+  (chatwork-get "/me" 'chatwork-me-callback))
 
 (defun chatwork-me-callback (status)
   (unless (plist-get status :error)
@@ -104,8 +112,7 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 
 (defun chatwork-get-rooms ()
   (interactive)
-  (let ((url-request-extra-headers `(("X-ChatWorkToken" . ,chatwork-token))))
-    (url-retrieve (chatwork-api-url "/rooms") 'chatwork-get-rooms-callback)))
+  (chatwork-get "/rooms" 'chatwork-get-rooms-callback))
 
 (defun chatwork-get-rooms-callback (status)
   (unless (plist-get status :error)
