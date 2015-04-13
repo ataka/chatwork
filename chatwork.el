@@ -202,7 +202,7 @@ ROOM-ID is an id number of the room."
   (interactive (let ((room-id (chatwork-find-room-id-by-room-name chatwork-room-name)))
                  (list room-id)))
   (let* ((page-delimiter (concat "^" chatwork-page-delimiter))
-	 (beg (progn (backward-page) (point)))
+     (beg (progn (backward-page) (point)))
          (end (progn (forward-page) (skip-chars-backward chatwork-page-delimiter) (point)))
          (message (buffer-substring-no-properties beg end)))
     (chatwork-post-message message room-id))
@@ -215,7 +215,7 @@ ROOM-ID is an id number of the room."
 STAMP is car of cons cell in `chatwork-stamp-alist'.
 ROOM-ID is an ad number of the room."
   (interactive (list (completing-read "Stamp: " chatwork-stamp-alist)
-		     (chatwork-find-room-id-by-room-name chatwork-room-name)))
+             (chatwork-find-room-id-by-room-name chatwork-room-name)))
   (chatwork-post-message (cdr (assoc stamp chatwork-stamp-alist))
                          room-id))
 
@@ -303,14 +303,14 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 (defun chatwork-switch-to-room (room-name)
   "Display room ROOM-NAME in the selected window"
   (interactive (list (let ((completion-ignore-case t)
-			   (active-rooms
-			    (delq nil (mapcar
-				       (lambda (buf)
-					 (let ((name (buffer-name buf)))
-					   (when (string-match "\\*chatwork: \\(.+\\)\\*" name)
-					     (match-string-no-properties 1 name))))
-				       (buffer-list)))))
-		       (completing-read "Room: " active-rooms nil nil nil 'chatwork-room-history (car chatwork-room-history)))))
+               (active-rooms
+                (delq nil (mapcar
+                       (lambda (buf)
+                     (let ((name (buffer-name buf)))
+                       (when (string-match "\\*chatwork: \\(.+\\)\\*" name)
+                         (match-string-no-properties 1 name))))
+                       (buffer-list)))))
+               (completing-read "Room: " active-rooms nil nil nil 'chatwork-room-history (car chatwork-room-history)))))
   (switch-to-buffer (chatwork-buffer room-name)))
 
 (defun chatwork-electric-backquote ()
@@ -318,7 +318,7 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
   (interactive)
   (if (looking-back "^``")
       (progn (delete-region (point) (progn (beginning-of-line) (point)))
-	     (chatwork-insert-tag-code))
+         (chatwork-insert-tag-code))
     (call-interactively 'self-insert-command)))
 
 ;;; Tag
