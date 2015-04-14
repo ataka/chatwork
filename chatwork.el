@@ -280,7 +280,8 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
   (define-key map "\C-c\C-c" 'chatwork-send-message-at-point)
   (define-key map "\C-c\C-b" 'chatwork-switch-to-room)
   ;; Tag
-  (define-key map "\C-c\C-i\C-t" 'chatwork-insert-tag-to)
+  (define-key map "\C-c\C-i\C-t" 'chatwork-insert-tag-to-contacts)
+  (define-key map "\C-c\C-it"    'chatwork-insert-tag-to)
   (define-key map "\C-c\C-i\C-i" 'chatwork-insert-tag-info)
   (define-key map "\C-c\C-i\C-c" 'chatwork-insert-tag-code)
   (define-key map "\C-c\C-i\C-h" 'chatwork-insert-tag-hr)
@@ -354,6 +355,11 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 (defun chatwork-insert-tag-to (member)
   (interactive (list (completing-read "To: " chatwork-room-member-alist)))
   (insert (format "%s\n" (cdr (assoc member chatwork-room-member-alist)))))
+(defun chatwork-insert-tag-to-contacts (contact)
+  (interactive (list (completing-read "To: " chatwork-contacts-alist)))
+  (insert (format "[To:%s] %s\n"
+                  (cdr (assoc contact chatwork-contacts-alist))
+                  contact)))
 
 (defun chatwork-insert-tag-info ()
   (interactive)
