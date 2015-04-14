@@ -363,10 +363,12 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
   (interactive (list (completing-read "To: " chatwork-room-member-alist)))
   (insert (format "%s\n" (cdr (assoc member chatwork-room-member-alist)))))
 (defun chatwork-insert-tag-to-contacts (contact)
-  (interactive (list (completing-read "To: " chatwork-contacts-alist)))
-  (insert (format "[To:%s] %s\n"
-                  (cdr (assoc contact chatwork-contacts-alist))
-                  contact)))
+  (let ((contact-alist `(,@chatwork-contacts-name-alist ,@chatwork-contacts-id-alist))
+        account-id name)
+    (interactive (list (completing-read "To: " contacts-alist)))
+    (setq account-id (cdr (assoc contact contact-alist))
+          name (car (rassoc account-id chatwork-contacts-name-alist)))
+    (insert (format "[To:%d] %s\n" account-id name))))
 
 (defun chatwork-insert-tag-info ()
   (interactive)
