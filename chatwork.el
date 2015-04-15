@@ -135,6 +135,8 @@ CALLBACK sould be a callback function"
                           chatwork-rooms-plist)))
         (kill-buffer)))))
 
+(defalias 'chatwork-update-contacts 'chatwork-get-contacts)
+
 (defun chatwork-get-contacts ()
   (interactive)
   (chatwork-get "/contacts" 'chatwork-get-contacts-callback))
