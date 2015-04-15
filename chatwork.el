@@ -265,6 +265,8 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 (defun chatwork ()
   "Call Chatwork major mode"
   (interactive)
+  (unless chatwork-contacts-plist
+    (chatwork-get-contacts))
   (let* ((room-name (chatwork-select-room))
          (buffer-name (chatwork-buffer room-name)))
     (pop-to-buffer buffer-name)
