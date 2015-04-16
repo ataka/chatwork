@@ -85,6 +85,7 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 (defvar chatwork-room-info nil)
 (make-variable-buffer-local 'chatwork-room-info)
 (defvar chatwork-room-members-alist nil) ; FIXME
+(defvar chatwork-room-members-plist nil) ; FIXME
 
 ;;; Connectivity
 
@@ -138,7 +139,7 @@ CALLBACK sould be a callback function"
 
 (defun chatwork-get-room-members (room-id)
   (interactive "")
-  (chatwork-get (format "/rooms/%d/messages" roomd-id) 'chatwork-get-room-members-callback))
+  (chatwork-get (format "/rooms/%d/messages" room-id) 'chatwork-get-room-members-callback))
 
 (defun chatwork-get-room-members-callback (status)
   (unless (plist-get status :error)
