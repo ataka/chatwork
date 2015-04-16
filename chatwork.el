@@ -84,6 +84,7 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 (make-variable-buffer-local 'chatwork-room-name)
 (defvar chatwork-room-info nil)
 (make-variable-buffer-local 'chatwork-room-info)
+(defvar chatwork-room-members-alist nil) ; FIXME
 
 ;;; Connectivity
 
@@ -133,6 +134,31 @@ CALLBACK sould be a callback function"
                                   (room-name (plist-get room :name)))
                               (cons room-name room-id)))
                           chatwork-rooms-plist)))
+        (kill-buffer)))))
+
+(defun chatwork-get-room-members (room-id)
+  (interactive "")
+  (chatwork-get (format "/rooms/%d/messages" roomd-id) 'chatwork-get-room-members-callback))
+
+(defun chatwork-get-room-members-callback (status)
+  (unless (plist-get status :error)
+    (let ((json-object-type 'plist))
+      (set-buffer (current-buffer))
+      (unwind-protect
+          (let ((json-data (progn (chatwork-callback-skip-header)
+                                  (json-read))))
+            (setq chatwork-room-members-plist json-data)
+            (setq chatwork-room-members-alist `(
+                  ,@(mapcar (lambda (contact)
+                              (let ((account-id (plist-get contact :account_id))
+                                    (name       (plist-get contact :name)))
+                                (cons name account-id)))
+                          chatwork-room-members-plist)
+                  ,@(mapcar (lambda (room)
+                              (let ((room-id   (plist-get room :room_id))
+                                    (room-name (plist-get room :name)))
+                                (cons room-name room-id)))
+                            chatwork-room-members-plist))))
         (kill-buffer)))))
 
 (defalias 'chatwork-update-contacts 'chatwork-get-contacts)
