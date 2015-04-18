@@ -151,8 +151,7 @@ CALLBACK sould be a callback function"
       (unwind-protect
           (let ((json-data (progn (chatwork-callback-skip-header)
                                   (json-read))))
-            (save-excursion
-              (set-buffer chatwork-last-buffer)
+            (with-current-buffer chatwork-last-buffer
               (setq chatwork-room-members-plist json-data)
               (setq chatwork-room-members-alist `(
                     ,@(mapcar (lambda (contact)
