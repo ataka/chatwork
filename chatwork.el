@@ -84,8 +84,11 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 (make-variable-buffer-local 'chatwork-room-name)
 (defvar chatwork-room-info nil)
 (make-variable-buffer-local 'chatwork-room-info)
-(defvar chatwork-room-members-alist nil) ; FIXME
-(defvar chatwork-room-members-plist nil) ; FIXME
+(defvar chatwork-last-buffer nil)
+(defvar chatwork-room-members-plist nil)
+(make-variable-buffer-local 'chatwork-room-members-plist)
+(defvar chatwork-room-members-alist nil)
+(make-variable-buffer-local 'chatwork-room-members-alist)
 
 ;;; Connectivity
 
@@ -139,7 +142,7 @@ CALLBACK sould be a callback function"
 
 (defun chatwork-get-room-members (room-id)
   (interactive "")
-  (chatwork-get (format "/rooms/%d/messages" room-id) 'chatwork-get-room-members-callback))
+  (chatwork-get (format "/rooms/%d/members" room-id) 'chatwork-get-room-members-callback))
 
 (defun chatwork-get-room-members-callback (status)
   (unless (plist-get status :error)
@@ -148,18 +151,20 @@ CALLBACK sould be a callback function"
       (unwind-protect
           (let ((json-data (progn (chatwork-callback-skip-header)
                                   (json-read))))
-            (setq chatwork-room-members-plist json-data)
-            (setq chatwork-room-members-alist `(
-                  ,@(mapcar (lambda (contact)
-                              (let ((account-id (plist-get contact :account_id))
-                                    (name       (plist-get contact :name)))
-                                (cons name account-id)))
-                          chatwork-room-members-plist)
-                  ,@(mapcar (lambda (room)
-                              (let ((room-id   (plist-get room :room_id))
-                                    (room-name (plist-get room :name)))
-                                (cons room-name room-id)))
-                            chatwork-room-members-plist))))
+            (save-excursion
+              (set-buffer chatwork-last-buffer)
+              (setq chatwork-room-members-plist json-data)
+              (setq chatwork-room-members-alist `(
+                    ,@(mapcar (lambda (contact)
+                                (let ((account-id (plist-get contact :account_id))
+                                      (name       (plist-get contact :name)))
+                                  (cons name account-id)))
+                              chatwork-room-members-plist)
+                    ,@(mapcar (lambda (contact)
+                                (let ((account-id (plist-get contact :account_id))
+                                      (name       (plist-get contact :name)))
+                                  (cons name account-id)))
+                              chatwork-room-members-plist)))))
         (kill-buffer)))))
 
 (defalias 'chatwork-update-contacts 'chatwork-get-contacts)
@@ -299,8 +304,9 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
     (chatwork-get-contacts))
   (let* ((room-name (chatwork-select-room))
          (buffer-name (chatwork-buffer room-name)))
-    (pop-to-buffer buffer-name)
+    (setq chatwork-last-buffer (pop-to-buffer buffer-name))
     (chatwork-mode)
+    (chatwork-get-room-members (cdr (assoc room-name chatwork-rooms-alist)))
     (setq chatwork-room-name room-name
           chatwork-buffer-name buffer-name)))
 
