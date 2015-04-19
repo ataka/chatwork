@@ -111,7 +111,6 @@ CALLBACK sould be a callback function"
 (defun chatwork-me-callback (status)
   (unless (plist-get status :error)
     (let ((json-object-type 'plist))
-      (set-buffer (current-buffer))
       (unwind-protect
           (let ((json-data (progn (chatwork-callback-skip-header)
                                   (json-read))))
@@ -127,7 +126,6 @@ CALLBACK sould be a callback function"
 (defun chatwork-get-rooms-callback (status)
   (unless (plist-get status :error)
     (let ((json-object-type 'plist))
-      (set-buffer (current-buffer))
       (unwind-protect
           (let ((json-data (progn (chatwork-callback-skip-header)
                                   (json-read))))
@@ -147,7 +145,6 @@ CALLBACK sould be a callback function"
 (defun chatwork-get-room-members-callback (status)
   (unless (plist-get status :error)
     (let ((json-object-type 'plist))
-      (set-buffer (current-buffer))
       (unwind-protect
           (let ((json-data (progn (chatwork-callback-skip-header)
                                   (json-read))))
@@ -175,7 +172,6 @@ CALLBACK sould be a callback function"
 (defun chatwork-get-contacts-callback (status)
   (unless (plist-get status :error)
     (let ((json-object-type 'plist))
-      (set-buffer (current-buffer))
       (unwind-protect
           (let ((json-data (progn (chatwork-callback-skip-header)
                                   (json-read))))
@@ -285,7 +281,6 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
                  (concat "body=" (url-hexify-string message))))
 
 (defun chatwork-post-callback (status)
-  (set-buffer (current-buffer))
   (unwind-protect
       (message "done!")
     (kill-buffer)))
