@@ -53,6 +53,16 @@
   :type 'string
   :group 'chatwork)
 
+(defcustom chatwork-to-tag-prefix ""
+  "Prefix of To tag."
+  :type 'string
+  :group 'chatwork)
+
+(defcustom chatwork-to-tag-suffix ""
+  "Suffix of To tag."
+  :type 'string
+  :group 'chatwork)
+
 ;; System Variables
 
 (defconst chatwork-api-base-url "https://api.chatwork.com/v1"
@@ -406,7 +416,8 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
   (let* ((member-info (cdr (assoc member chatwork-room-members-alist)))
          (name        (car member-info))
          (account-id  (cdr member-info)))
-    (insert (format "[To:%s] %s\n" account-id name))))
+    (insert (format "[To:%s] %s%s%s\n" account-id
+                    chatwork-to-tag-prefix name chatwork-to-tag-suffix))))
 
 (defun chatwork-insert-tag-info ()
   (interactive)
