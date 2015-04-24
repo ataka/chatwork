@@ -81,6 +81,8 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 (defvar chatwork-room-history nil)
 (defvar chatwork-room-member-alist nil ; FIXME
   "Alist of Room member which cons cell is `(\"alias\" . \"[To:NNNN] Name\")'")
+(defvar chatwork-members-alias-alist nil
+  "Alist of members which cons cell is `(\"alias\" . (list ACCOUNT_ID)'")
 (defvar chatwork-stamp-alist nil
   "Alist of Stamp whic cons cell is `(\"alias\" . \"Stamp strings\")'")
 (defvar chatwork-page-delimiter "\014")
