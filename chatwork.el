@@ -397,11 +397,6 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 (defun chatwork-concat-heading-space (str)
   (concat (when str " ") str))
 
-;; FIXME
-;;
-;; (defun chatwork-insert-tag-to (to)
-;;   (interactive "sTo: ")
-;;   (chatwork-insert-tag "To" (concat ":" to) nil "Name"))
 (defun chatwork-insert-tag-to (member)
   (interactive (list (completing-read "To: " chatwork-member-alist)))
   (insert (format "%s\n" (cdr (assoc member chatwork-member-alist)))))
