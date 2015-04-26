@@ -406,12 +406,27 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
   (interactive (list (completing-read "To: " chatwork-member-alist)))
   (insert (format "%s\n" (cdr (assoc member chatwork-member-alist)))))
 (defun chatwork-insert-tag-to-member (member)
-  (interactive (list (completing-read "To: " chatwork-member-alist)))
-  (let* ((member-info (cdr (assoc member chatwork-member-alist)))
-         (name        (car member-info))
-         (account-id  (cdr member-info)))
-    (insert (format "[To:%s] %s%s%s\n" account-id
-                    chatwork-to-tag-prefix name chatwork-to-tag-suffix))))
+  (interactive (list (completing-read "To: " `(,@chatwork-member-alist ,@chatwork-member-alias-alist))))
+  (let (name account-id member-info)
+    (if (setq member-info (cdr (assoc member chatwork-member-alist)))
+        (progn
+          (setq name        (car member-info)
+                account-id  (cdr member-info))
+          (insert (format "[To:%s] %s%s%s\n" account-id
+                          chatwork-to-tag-prefix name chatwork-to-tag-suffix)))
+      (setq member-info (cdr (assoc member chatwork-member-alias-alist)))
+      (if (numberp (cdr member-info))
+          (progn
+            (setq account-id (cdr member-info)
+                  name       (chatwork-name-by-account-id account-id))
+            (insert (format "[To:%s] %s%s%s\n" account-id
+                            chatwork-to-tag-prefix name chatwork-to-tag-suffix)))
+        (mapc (lambda (account-id)
+                (setq name (chatwork-name-by-account-id account-id))
+                (insert (format "[To:%s] %s%s%s, " account-id
+                                chatwork-to-tag-prefix name chatwork-to-tag-suffix))))
+        (delete-char -1)
+        (insert "\n")))))
 
 (defun chatwork-insert-tag-info ()
   (interactive)
