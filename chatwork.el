@@ -70,13 +70,13 @@
 Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 
 (defvar chatwork-me-plist nil)
-(defvar chatwork-contacts-plist nil)
-(defvar chatwork-contacts-name-alist nil
-  "Alist of Contacts which cons cell is `(NAME . ACCOUNT_ID)'")
-(defvar chatwork-contacts-id-alist nil
-  "Alist of Contacts which cons cell is `(CHATWORK_ID . ACCOUNT_ID)'")
-(defvar chatwork-rooms-plist nil)
-(defvar chatwork-rooms-alist nil
+(defvar chatwork-contact-plist nil)
+(defvar chatwork-contact-name-alist nil
+  "Alist of Contact which cons cell is `(NAME . ACCOUNT_ID)'")
+(defvar chatwork-contact-id-alist nil
+  "Alist of Contact which cons cell is `(CHATWORK_ID . ACCOUNT_ID)'")
+(defvar chatwork-room-plist nil)
+(defvar chatwork-room-alist nil
   "Alist of Rooms which cons cell is `(ROOM_NAME . ROOM_ID)'")
 (defvar chatwork-room-history nil)
 (defvar chatwork-room-member-alist nil ; FIXME
@@ -97,10 +97,10 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 (defvar chatwork-room-info nil)
 (make-variable-buffer-local 'chatwork-room-info)
 (defvar chatwork-last-buffer nil)
-(defvar chatwork-room-members-plist nil)
-(make-variable-buffer-local 'chatwork-room-members-plist)
-(defvar chatwork-room-members-alist nil)
-(make-variable-buffer-local 'chatwork-room-members-alist)
+(defvar chatwork-member-plist nil)
+(make-variable-buffer-local 'chatwork-member-plist)
+(defvar chatwork-member-alist nil)
+(make-variable-buffer-local 'chatwork-member-alist)
 
 ;;; Connectivity
 
@@ -141,39 +141,39 @@ CALLBACK sould be a callback function"
       (unwind-protect
           (let ((json-data (progn (chatwork-callback-skip-header)
                                   (json-read))))
-            (setq chatwork-rooms-plist json-data)
-            (setq chatwork-rooms-alist
+            (setq chatwork-room-plist json-data)
+            (setq chatwork-room-alist
                   (mapcar (lambda (room)
                             (let ((room-id   (plist-get room :room_id))
                                   (room-name (plist-get room :name)))
                               (cons room-name room-id)))
-                          chatwork-rooms-plist)))
+                          chatwork-room-plist)))
         (kill-buffer)))))
 
-(defun chatwork-get-room-members (room-id)
+(defun chatwork-get-members (room-id)
   (interactive "")
-  (chatwork-get (format "/rooms/%d/members" room-id) 'chatwork-get-room-members-callback))
+  (chatwork-get (format "/rooms/%d/members" room-id) 'chatwork-get-members-callback))
 
-(defun chatwork-get-room-members-callback (status)
+(defun chatwork-get-members-callback (status)
   (unless (plist-get status :error)
     (let ((json-object-type 'plist))
       (unwind-protect
           (let ((json-data (progn (chatwork-callback-skip-header)
                                   (json-read))))
             (with-current-buffer chatwork-last-buffer
-              (setq chatwork-room-members-plist json-data)
-              (setq chatwork-room-members-alist `(
+              (setq chatwork-member-plist json-data)
+              (setq chatwork-member-alist `(
                     ,@(mapcar (lambda (member)
                                 (let ((account-id (plist-get member :account_id))
                                       (name       (plist-get member :name)))
                                   (cons name (cons name account-id))))
-                              chatwork-room-members-plist)
+                              chatwork-member-plist)
                     ,@(mapcar (lambda (member)
                                 (let ((account-id  (plist-get member :account_id))
                                       (chatwork-id (plist-get member :chatwork_id))
                                       (name        (plist-get member :name)))
                                   (cons chatwork-id (cons name account-id))))
-                              chatwork-room-members-plist)))))
+                              chatwork-member-plist)))))
         (kill-buffer)))))
 
 (defalias 'chatwork-update-contacts 'chatwork-get-contacts)
@@ -188,24 +188,24 @@ CALLBACK sould be a callback function"
       (unwind-protect
           (let ((json-data (progn (chatwork-callback-skip-header)
                                   (json-read))))
-            (setq chatwork-contacts-plist json-data)
-            (setq chatwork-contacts-name-alist
+            (setq chatwork-contact-plist json-data)
+            (setq chatwork-contact-name-alist
                   (mapcar (lambda (contact)
                             (let ((account-id (plist-get contact :account_id))
                                   (name       (plist-get contact :name)))
                               (cons name (cons name account-id))))
-                          chatwork-contacts-plist)
-                  chatwork-contacts-id-alist
+                          chatwork-contact-plist)
+                  chatwork-contact-id-alist
                   (mapcar (lambda (contact)
                             (let ((account-id  (plist-get contact :account_id))
                                   (chatwork-id (plist-get contact :chatwork_id))
                                   (name        (plist-get contact :name)))
                               (cons chatwork-id (cons name account-id))))
-                          chatwork-contacts-plist)))
+                          chatwork-contact-plist)))
         (kill-buffer)))))
 
 (defun chatwork-find-room-id-by-room-name (&optional room-name)
-  (let* ((rooms (progn (chatwork-ensure-rooms-alist) chatwork-rooms-alist)))
+  (let* ((rooms (progn (chatwork-ensure-room-alist) chatwork-room-alist)))
     (unless room-name
       (setq room-name (let ((completion-ignore-case t)) (completing-read "Room: " rooms nil nil nil 'chatwork-room-history (car chatwork-room-history)))))
     (cdr (assoc room-name rooms))))
@@ -269,10 +269,10 @@ ROOM-ID is an ad number of the room."
   (chatwork-post-message (cdr (assoc stamp chatwork-stamp-alist))
                          room-id))
 
-(defun chatwork-ensure-rooms-alist ()
-  (unless chatwork-rooms-alist
+(defun chatwork-ensure-room-alist ()
+  (unless chatwork-room-alist
     (chatwork-update-rooms))
-  (while (not chatwork-rooms-alist)
+  (while (not chatwork-room-alist)
     (sleep-for 1)))
 
 (defmacro chatwork-post (path data)
@@ -307,13 +307,13 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 (defun chatwork ()
   "Call Chatwork major mode"
   (interactive)
-  (unless chatwork-contacts-plist
+  (unless chatwork-contact-plist
     (chatwork-get-contacts))
   (let* ((room-name (chatwork-select-room))
          (buffer-name (chatwork-buffer room-name)))
     (setq chatwork-last-buffer (pop-to-buffer buffer-name))
     (chatwork-mode)
-    (chatwork-get-room-members (cdr (assoc room-name chatwork-rooms-alist)))
+    (chatwork-get-members (cdr (assoc room-name chatwork-room-alist)))
     (setq chatwork-room-name room-name
           chatwork-buffer-name buffer-name)))
 
@@ -346,7 +346,7 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 ;;
 
 (defun chatwork-select-room ()
-  (let* ((rooms (progn (chatwork-ensure-rooms-alist) chatwork-rooms-alist))
+  (let* ((rooms (progn (chatwork-ensure-room-alist) chatwork-room-alist))
          (room-name (let ((completion-ignore-case t)) (completing-read "Room: " rooms nil nil nil 'chatwork-room-history (car chatwork-room-history)))))
     room-name))
 
@@ -399,17 +399,12 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 (defun chatwork-concat-heading-space (str)
   (concat (when str " ") str))
 
-;; FIXME
-;;
-;; (defun chatwork-insert-tag-to (to)
-;;   (interactive "sTo: ")
-;;   (chatwork-insert-tag "To" (concat ":" to) nil "Name"))
 (defun chatwork-insert-tag-to (member)
-  (interactive (list (completing-read "To: " chatwork-room-member-alist)))
-  (insert (format "%s\n" (cdr (assoc member chatwork-room-member-alist)))))
+  (interactive (list (completing-read "To: " chatwork-member-alist)))
+  (insert (format "%s\n" (cdr (assoc member chatwork-member-alist)))))
 (defun chatwork-insert-tag-to-member (member)
-  (interactive (list (completing-read "To: " chatwork-room-members-alist)))
-  (let* ((member-info (cdr (assoc member chatwork-room-members-alist)))
+  (interactive (list (completing-read "To: " chatwork-member-alist)))
+  (let* ((member-info (cdr (assoc member chatwork-member-alist)))
          (name        (car member-info))
          (account-id  (cdr member-info)))
     (insert (format "[To:%s] %s%s%s\n" account-id
