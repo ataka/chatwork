@@ -79,8 +79,6 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 (defvar chatwork-room-alist nil
   "Alist of Rooms which cons cell is `(ROOM_NAME . ROOM_ID)'")
 (defvar chatwork-room-history nil)
-(defvar chatwork-room-member-alist nil ; FIXME
-  "Alist of Room member which cons cell is `(\"alias\" . \"[To:NNNN] Name\")'")
 (defvar chatwork-member-alias-alist nil
   "Alist of members which cons cell is `(\"alias\" . ACCOUNT_ID)'
 You can use (list ACCOUNT_ID)' for cdr of cons cell.
