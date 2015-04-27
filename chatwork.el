@@ -84,6 +84,8 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 You can use (list ACCOUNT_ID)' for cdr of cons cell.
 
 ACCOUNT_ID should be number.")
+(defvar chatwork-member-separator ", "
+  "String to separate multiple members for TO tag")
 (defvar chatwork-stamp-alist nil
   "Alist of Stamp whic cons cell is `(\"alias\" . \"Stamp strings\")'")
 (defvar chatwork-page-delimiter "\014")
@@ -425,12 +427,13 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
                             chatwork-to-tag-suffix)))
         (mapc (lambda (account-id)
                 (when (rassoc account-id chatwork-member-alist)
-                  (insert (format "[To:%s] %s%s%s, " account-id
+                  (insert (format "[To:%s] %s%s%s%s" account-id
                                   chatwork-to-tag-prefix
                                   (chatwork-member-name-by-account-id account-id)
-                                  chatwork-to-tag-suffix))))
+                                  chatwork-to-tag-suffix
+                                  chatwork-member-separator))))
               (cdr member-info))
-        (delete-char -2)
+        (delete-char (- (length chatwork-member-separator)))
         (insert "\n")))))
 
 (defun chatwork-member-name-by-account-id (account-id)
