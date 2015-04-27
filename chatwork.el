@@ -410,31 +410,31 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 (defun chatwork-insert-tag-to (member)
   (interactive (list (completing-read "To: " `(,@chatwork-member-alist ,@chatwork-member-alias-alist))))
   (let (account-id member-info)
-    (if (setq member-info (assoc member chatwork-member-alist))
-        (progn
-          (setq account-id (cdr member-info))
-          (insert (format "[To:%s] %s%s%s\n" account-id
-                          chatwork-to-tag-prefix
-                          (chatwork-member-name-by-account-id account-id)
-                          chatwork-to-tag-suffix)))
-      (setq member-info (assoc member chatwork-member-alias-alist))
-      (if (numberp (cdr member-info))
-          (progn
-            (setq account-id (cdr member-info))
-            (insert (format "[To:%s] %s%s%s\n" account-id
-                            chatwork-to-tag-prefix
-                            (chatwork-member-name-by-account-id account-id)
-                            chatwork-to-tag-suffix)))
-        (mapc (lambda (account-id)
-                (when (rassoc account-id chatwork-member-alist)
-                  (insert (format "[To:%s] %s%s%s%s" account-id
-                                  chatwork-to-tag-prefix
-                                  (chatwork-member-name-by-account-id account-id)
-                                  chatwork-to-tag-suffix
-                                  chatwork-member-separator))))
-              (cdr member-info))
-        (delete-char (- (length chatwork-member-separator)))
-        (insert "\n")))))
+    (cond
+     ((setq member-info (assoc member chatwork-member-alist))
+      (setq account-id (cdr member-info))
+      (insert (format "[To:%s] %s%s%s\n" account-id
+                      chatwork-to-tag-prefix
+                      (chatwork-member-name-by-account-id account-id)
+                      chatwork-to-tag-suffix)))
+     ((numberp (cdr (setq member-info (assoc member chatwork-member-alias-alist))))
+      (setq account-id (cdr member-info))
+      (insert (format "[To:%s] %s%s%s\n" account-id
+                      chatwork-to-tag-prefix
+                      (chatwork-member-name-by-account-id account-id)
+                      chatwork-to-tag-suffix)))
+     ((listp (cdr member-info))
+      (mapc (lambda (account-id)
+              (when (rassoc account-id chatwork-member-alist)
+                (insert (format "[To:%s] %s%s%s%s" account-id
+                                chatwork-to-tag-prefix
+                                (chatwork-member-name-by-account-id account-id)
+                                chatwork-to-tag-suffix
+                                chatwork-member-separator))))
+            (cdr member-info))
+      (delete-char (- (length chatwork-member-separator)))
+      (insert "\n"))
+     (t nil))))
 
 (defun chatwork-member-name-by-account-id (account-id)
   (cdr (assoc account-id (plist-get chatwork-room-plist :member_name))))
