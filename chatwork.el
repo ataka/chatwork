@@ -202,14 +202,13 @@ CALLBACK sould be a callback function"
                   (mapcar (lambda (contact)
                             (let ((account-id (plist-get contact :account_id))
                                   (name       (plist-get contact :name)))
-                              (cons name (cons name account-id))))
+                              (cons name account-id)))
                           chatwork-contact-plist)
                   chatwork-contact-id-alist
                   (mapcar (lambda (contact)
                             (let ((account-id  (plist-get contact :account_id))
-                                  (chatwork-id (plist-get contact :chatwork_id))
-                                  (name        (plist-get contact :name)))
-                              (cons chatwork-id (cons name account-id))))
+                                  (chatwork-id (plist-get contact :chatwork_id)))
+                              (cons chatwork-id account-id)))
                           chatwork-contact-plist)))
         (kill-buffer)))))
 
