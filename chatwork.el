@@ -424,7 +424,8 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
                       chatwork-to-tag-suffix)))
      ((listp (cdr member-info))
       (mapc (lambda (account-id)
-              (when (rassoc account-id chatwork-member-alist)
+              (when (or (not (eq major-mode 'chatwork-mode))
+                        (rassoc account-id chatwork-member-alist))
                 (insert (format "[To:%s] %s%s%s%s" account-id
                                 chatwork-to-tag-prefix
                                 (chatwork-member-name-by-account-id account-id)
@@ -436,7 +437,10 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
      (t nil))))
 
 (defun chatwork-member-name-by-account-id (account-id)
-  (cdr (assoc account-id (plist-get chatwork-room-plist :member_name))))
+  (if (eq major-mode 'chatwork-mode)
+      (cdr (assoc account-id (plist-get chatwork-room-plist :member_name)))
+    (and chatwork-contact-name-alist (chatwork-get-contacts))
+    (car (rassoc account-id chatwork-contact-name-alist))))
 
 (defun chatwork-insert-tag-info ()
   (interactive)
