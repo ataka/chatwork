@@ -408,24 +408,24 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 
 (defun chatwork-insert-tag-to (member)
   (interactive (list (completing-read "To: " `(,@chatwork-member-alist ,@chatwork-member-alias-alist))))
-  (let ((format-to (format "[To:%%s] %s%%s%s"
-                           chatwork-to-tag-prefix
-                           chatwork-to-tag-suffix))
-        account-id member-info)
+  (let* ((format-base (format "[To:%%s] %s%%s%s"
+                              chatwork-to-tag-prefix
+                              chatwork-to-tag-suffix))
+         (format-newline (concat format-base "\n"))
+         (format-alias   (concat format-base chatwork-member-separator))
+         account-id member-info)
     (cond
      ((setq member-info (assoc member chatwork-member-alist))
       (setq account-id (cdr member-info))
-      (insert (format format-to account-id (chatwork-member-name-by-account-id account-id))
-              "\n"))
+      (insert (format format-newline account-id (chatwork-member-name-by-account-id account-id))))
      ((numberp (cdr (setq member-info (assoc member chatwork-member-alias-alist))))
       (setq account-id (cdr member-info))
-      (insert (format format-to account-id (chatwork-member-name-by-account-id account-id))
-              "\n"))
+      (insert (format format-newline account-id (chatwork-member-name-by-account-id account-id))))
      ((listp (cdr member-info))
       (mapc (lambda (account-id)
               (when (or (not (eq major-mode 'chatwork-mode))
                         (rassoc account-id chatwork-member-alist))
-                (insert (format format-to account-id (chatwork-member-name-by-account-id account-id)))))
+                (insert (format format-alias account-id (chatwork-member-name-by-account-id account-id)))))
             (cdr member-info))
       (delete-char (- (length chatwork-member-separator)))
       (insert "\n"))
