@@ -408,7 +408,7 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 
 (defun chatwork-insert-tag-to (member)
   (interactive (list (completing-read "To: " `(,@chatwork-member-alist ,@chatwork-member-alias-alist))))
-  (let* ((format-base (format "[To:%%s] %s%%s%s"
+  (let* ((format-base (format "[To:%%d] %s%%s%s"
                               chatwork-to-tag-prefix
                               chatwork-to-tag-suffix))
          (format-newline (concat format-base "\n"))
