@@ -429,7 +429,7 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
             (cdr member-info))
       (delete-char (- (length chatwork-member-separator)))
       (insert "\n"))
-     (t nil))))
+     (t (error "Wrong format of `chatwork-member-alias-alist'")))))
 
 (defun chatwork-member-name-by-account-id (account-id)
   (if (eq major-mode 'chatwork-mode)
