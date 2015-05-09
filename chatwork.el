@@ -63,6 +63,16 @@
   :type 'string
   :group 'chatwork)
 
+(defcustom chatwork-member-alias-alist nil
+  "Alist of members which cons cell is `(\"alias\" . ACCOUNT_ID)'
+You can use a list of ACCOUNT_IDs; `(\"alias\" . (ACCUONT_ID ACCOUNT_ID))'
+
+ACCOUNT_ID should be number."
+  :type '(alist :key-type (string :tag "Alias")
+                :value-type (choice integer (sexp integer)))
+  :group 'chatwork)
+
+
 ;; System Variables
 
 (defconst chatwork-api-base-url "https://api.chatwork.com/v1"
@@ -79,11 +89,7 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 (defvar chatwork-room-alist nil
   "Alist of Rooms which cons cell is `(ROOM_NAME . ROOM_ID)'")
 (defvar chatwork-room-history nil)
-(defvar chatwork-member-alias-alist nil
-  "Alist of members which cons cell is `(\"alias\" . ACCOUNT_ID)'
-You can use (list ACCOUNT_ID)' for cdr of cons cell.
 
-ACCOUNT_ID should be number.")
 (defvar chatwork-member-separator ", "
   "String to separate multiple members for TO tag")
 (defvar chatwork-stamp-alist nil
