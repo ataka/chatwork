@@ -63,6 +63,19 @@
   :type 'string
   :group 'chatwork)
 
+(defcustom chatwork-member-alias-alist nil
+  "Alist of members which cons cell is `(\"alias\" . ACCOUNT_ID)'
+You can use a list of ACCOUNT_IDs; `(\"alias\" . (ACCUONT_ID ACCOUNT_ID))'
+
+ACCOUNT_ID should be number."
+  :type '(alist :key-type (string :tag "Alias")
+                :value-type (choice integer (sexp integer)))
+  :group 'chatwork)
+
+(defcustom chatwork-member-separator ", "
+  "String to separate multiple members
+See `chatwork-member-alias-alist'.")
+
 ;; System Variables
 
 (defconst chatwork-api-base-url "https://api.chatwork.com/v1"
@@ -79,8 +92,7 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 (defvar chatwork-room-alist nil
   "Alist of Rooms which cons cell is `(ROOM_NAME . ROOM_ID)'")
 (defvar chatwork-room-history nil)
-(defvar chatwork-room-member-alist nil ; FIXME
-  "Alist of Room member which cons cell is `(\"alias\" . \"[To:NNNN] Name\")'")
+
 (defvar chatwork-stamp-alist nil
   "Alist of Stamp whic cons cell is `(\"alias\" . \"Stamp strings\")'")
 (defvar chatwork-page-delimiter "\014")
@@ -92,8 +104,8 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 (make-variable-buffer-local 'chatwork-buffer-name)
 (defvar chatwork-room-name nil)
 (make-variable-buffer-local 'chatwork-room-name)
-(defvar chatwork-room-info nil)
-(make-variable-buffer-local 'chatwork-room-info)
+(defvar chatwork-room-plist nil)
+(make-variable-buffer-local 'chatwork-room-plist)
 (defvar chatwork-last-buffer nil)
 (defvar chatwork-member-plist nil)
 (make-variable-buffer-local 'chatwork-member-plist)
@@ -160,17 +172,23 @@ CALLBACK sould be a callback function"
                                   (json-read))))
             (with-current-buffer chatwork-last-buffer
               (setq chatwork-member-plist json-data)
+              (setq chatwork-room-plist
+                    (plist-put chatwork-room-plist :member_name
+                               (mapcar (lambda (member)
+                                         (let ((account-id (plist-get member :account_id))
+                                               (name       (plist-get member :name)))
+                                           (cons account-id name)))
+                                       chatwork-member-plist)))
               (setq chatwork-member-alist `(
                     ,@(mapcar (lambda (member)
                                 (let ((account-id (plist-get member :account_id))
                                       (name       (plist-get member :name)))
-                                  (cons name (cons name account-id))))
+                                  (cons name account-id)))
                               chatwork-member-plist)
                     ,@(mapcar (lambda (member)
                                 (let ((account-id  (plist-get member :account_id))
-                                      (chatwork-id (plist-get member :chatwork_id))
-                                      (name        (plist-get member :name)))
-                                  (cons chatwork-id (cons name account-id))))
+                                      (chatwork-id (plist-get member :chatwork_id)))
+                                  (cons chatwork-id account-id)))
                               chatwork-member-plist)))))
         (kill-buffer)))))
 
@@ -191,14 +209,13 @@ CALLBACK sould be a callback function"
                   (mapcar (lambda (contact)
                             (let ((account-id (plist-get contact :account_id))
                                   (name       (plist-get contact :name)))
-                              (cons name (cons name account-id))))
+                              (cons name account-id)))
                           chatwork-contact-plist)
                   chatwork-contact-id-alist
                   (mapcar (lambda (contact)
                             (let ((account-id  (plist-get contact :account_id))
-                                  (chatwork-id (plist-get contact :chatwork_id))
-                                  (name        (plist-get contact :name)))
-                              (cons chatwork-id (cons name account-id))))
+                                  (chatwork-id (plist-get contact :chatwork_id)))
+                              (cons chatwork-id account-id)))
                           chatwork-contact-plist)))
         (kill-buffer)))))
 
@@ -330,8 +347,7 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
   (define-key map "\C-c\C-c" 'chatwork-send-message-at-point)
   (define-key map "\C-c\C-b" 'chatwork-switch-to-room)
   ;; Tag
-  (define-key map "\C-c\C-i\C-t" 'chatwork-insert-tag-to-member)
-  (define-key map "\C-c\C-it"    'chatwork-insert-tag-to)
+  (define-key map "\C-c\C-i\C-t" 'chatwork-insert-tag-to)
   (define-key map "\C-c\C-i\C-i" 'chatwork-insert-tag-info)
   (define-key map "\C-c\C-i\C-c" 'chatwork-insert-tag-code)
   (define-key map "\C-c\C-i\C-h" 'chatwork-insert-tag-hr)
@@ -398,15 +414,39 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
   (concat (when str " ") str))
 
 (defun chatwork-insert-tag-to (member)
-  (interactive (list (completing-read "To: " chatwork-member-alist)))
-  (insert (format "%s\n" (cdr (assoc member chatwork-member-alist)))))
-(defun chatwork-insert-tag-to-member (member)
-  (interactive (list (completing-read "To: " chatwork-member-alist)))
-  (let* ((member-info (cdr (assoc member chatwork-member-alist)))
-         (name        (car member-info))
-         (account-id  (cdr member-info)))
-    (insert (format "[To:%s] %s%s%s\n" account-id
-                    chatwork-to-tag-prefix name chatwork-to-tag-suffix))))
+  (interactive (list (completing-read "To: " `(,@chatwork-member-alist ,@chatwork-member-alias-alist))))
+  (let* ((format-base (format "[To:%%d] %s%%s%s"
+                              chatwork-to-tag-prefix
+                              chatwork-to-tag-suffix))
+         (format-newline (concat format-base "\n"))
+         (format-alias   (concat format-base chatwork-member-separator))
+         account-id member-info)
+    (cond
+     ((setq member-info (assoc member chatwork-member-alist))
+      (setq account-id (cdr member-info))
+      (insert (format format-newline account-id (chatwork-member-name-by-account-id account-id))))
+     ((numberp (cdr (setq member-info (assoc member chatwork-member-alias-alist))))
+      (setq account-id (cdr member-info))
+      (insert (format format-newline account-id (chatwork-member-name-by-account-id account-id))))
+     ((listp (cdr member-info))
+      (mapc (lambda (account-id)
+              (when (or (not (eq major-mode 'chatwork-mode))
+                        (rassoc account-id chatwork-member-alist))
+                (insert (format format-alias account-id (chatwork-member-name-by-account-id account-id)))))
+            (cdr member-info))
+      (delete-char (- (length chatwork-member-separator)))
+      (insert "\n"))
+     (t (error "Wrong format of `chatwork-member-alias-alist'")))))
+
+(defun chatwork-member-name-by-account-id (account-id)
+  (if (eq major-mode 'chatwork-mode)
+      (cdr (assoc account-id (plist-get chatwork-room-plist :member_name)))
+    (or chatwork-contact-name-alist (chatwork-get-contacts))
+    (or (car (rassoc account-id chatwork-contact-name-alist))
+        (progn
+          (or chatwork-me-plist (chatwork-me))
+          (when (eq account-id (plist-get chatwork-me-plist :account_id))
+              (plist-get chatwork-me-plist :name))))))
 
 (defun chatwork-insert-tag-info ()
   (interactive)
