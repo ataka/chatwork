@@ -72,6 +72,9 @@ ACCOUNT_ID should be number."
                 :value-type (choice integer (sexp integer)))
   :group 'chatwork)
 
+(defcustom chatwork-member-separator ", "
+  "String to separate multiple members
+See `chatwork-member-alias-alist'.")
 
 ;; System Variables
 
@@ -90,8 +93,6 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
   "Alist of Rooms which cons cell is `(ROOM_NAME . ROOM_ID)'")
 (defvar chatwork-room-history nil)
 
-(defvar chatwork-member-separator ", "
-  "String to separate multiple members for TO tag")
 (defvar chatwork-stamp-alist nil
   "Alist of Stamp whic cons cell is `(\"alias\" . \"Stamp strings\")'")
 (defvar chatwork-page-delimiter "\014")
