@@ -6,7 +6,7 @@
 ;; Author: Masayuki Ataka <masayuki.ataka@gmail.com>
 ;; URL: https://github.com/ataka/chatwork
 ;; Keywords: web
-;; Version: 0.1
+;; Version: 0.2
 
 ;; This file is not part of GNU Emacs.
 
@@ -27,7 +27,7 @@
 
 ;;; Commentary:
 
-;; chatwork.el provides some commands for ChatWork service.
+;; chatwork.el provides chatwork-mode for sending messages to ChatWork.
 
 ;; Set your ChatWork API token, which you can get from
 ;; https://www.chatwork.com/service/packages/chatwork/subpackages/api/apply_beta.php
@@ -36,6 +36,8 @@
 ;;
 ;;  (setq chatwork-token "YOUR CHATWORK API TOKEN")
 ;;
+;; `chatwork' command open a draft buffer for selected room.
+;; Write a message, then type `C-cC-c'.
 
 ;;; Code:
 
