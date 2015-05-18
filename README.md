@@ -2,7 +2,8 @@
 
 A client library of [ChatWork](http://www.chatwork.com/) for Emacs.
 
-- Send a message to a room
+- ChatWork mode, one buffer for one room
+  - Send a message to a room
 
 ## Install ##
 
@@ -42,9 +43,28 @@ Put the following code into your `.emacs.d/init.el`
 (setq chatwork-token "YOUR CHATWORK API TOKEN")
 ```
 
-## Usage ##
+## chatwork-mode ##
 
-Now two interactive commands are available.
+Type `M-x chatwork`, then select your room.  A new buffer for chatwork room will open; which name is `*chatwork: YOUR ROOM NAME*`.
+
+Write a message in that buffer, then type `C-cC-c`.  The message is sent to the room in ChatWork!
+
+If you want to open other chatwork room, type `M-x chatwork` again.  `C-cC-b` will help to switch buffer for chatwork, if you have already opened it.
+
+### Insert commands ###
+
+Some Insert commands are prepared:
+
+- `C-cC-iC-t` : Insert To tag
+- `C-cC-iC-i` : Insert info tag
+- `C-cC-iC-c` : Insert code tag
+- `C-cC-iC-h` : Insert hr tag
+
+If you type backquote three times, then three backquotes will be replaced with tag code.  It is easy way to insert code tag!
+
+## Usage (not chatwork-mode) ##
+
+Two interactive commands are available.
 
 - `chatwork-send-message`
 - `chatwork-send-message-in-region`
@@ -59,8 +79,6 @@ Send a message in a region, with selecting the room you want to send a message.
 
 ## TODO ##
 
-- Message draft buffer
-  + Completion to input ChatWork tags, such as To and info
 - Create a task
   + List tasks
   + Update tasks
