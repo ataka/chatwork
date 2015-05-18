@@ -385,9 +385,12 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 (defun chatwork-electric-backquote ()
   "Insert code tag if line begin with ```"
   (interactive)
-  (if (looking-back "^``")
-      (progn (delete-region (point) (progn (beginning-of-line) (point)))
-         (chatwork-insert-tag-code))
+  (if (looking-back (concat "^" chatwork-page-delimiter "?``"))
+      (progn (delete-region (point)
+                            (progn (beginning-of-line)
+                                   (skip-chars-forward chatwork-page-delimiter)
+                                   (point)))
+             (chatwork-insert-tag-code))
     (call-interactively 'self-insert-command)))
 
 ;;; Tag
