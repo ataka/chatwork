@@ -1,5 +1,7 @@
 # chatwork.el - ChatWork client for Emacs #
 
+[![MELPA](http://melpa.org/packages/chatwork-badge.svg)](http://melpa.org/#/chatwork)
+
 A client library of [ChatWork](http://www.chatwork.com/) for Emacs.
 
 - ChatWork mode, one buffer for one room
