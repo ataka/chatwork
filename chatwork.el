@@ -455,17 +455,13 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 
 (defun chatwork-insert-tag-info (arg)
   (interactive "P")
-  (if arg
-      (call-interactively 'chatwork-insert-tag-info-with-title)
-    (chatwork-insert-tag "info" nil t)))
-
-(defun chatwork-insert-tag-info-with-title (title)
-  (interactive "sTitle: ")
-  (chatwork-insert-tag-info)
-  (progn
-    (chatwork-insert-tag "title" nil t)
-    (insert title))
-  (search-forward "[/title]" nil t))
+  (let ((title (when arg
+                 (read-string "Title: "))))
+    (insert "[info]")
+    (when title
+      (insert (concat "[title]" title "[/title]")))
+    (save-excursion
+      (insert "[/info]\n"))))
 
 (define-skeleton chatwork-insert-tag-code
   "Insert tag tag."
