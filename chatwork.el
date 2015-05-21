@@ -405,18 +405,6 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 ;; [picon:{account_id}]
 ;; [piconname:{account_id}]
 
-(defun chatwork-insert-tag (tag &optional attr close following)
-  (let* ((open-tag (if attr (format "[%s%s]" tag attr) (format "[%s]" tag)))
-         (close-tag (format "[/%s]" tag)))
-    (insert open-tag)
-    (when close
-      (save-excursion
-        (insert close-tag)))
-    (when following
-      (insert following " "))))
-
-(defun chatwork-concat-heading-space (str)
-  (concat (when str " ") str))
 
 (defun chatwork-insert-tag-to (member)
   (interactive (list (completing-read "To: " `(,@chatwork-member-alist ,@chatwork-member-alias-alist))))
@@ -472,7 +460,7 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 
 (defun chatwork-insert-tag-hr ()
   (interactive)
-  (chatwork-insert-tag "hr"))
+  (insert "[hr]"))
 
 (provide 'chatwork)
 
