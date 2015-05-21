@@ -453,9 +453,11 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
           (when (eq account-id (plist-get chatwork-me-plist :account_id))
               (plist-get chatwork-me-plist :name))))))
 
-(defun chatwork-insert-tag-info ()
-  (interactive)
-  (chatwork-insert-tag "info" nil t))
+(defun chatwork-insert-tag-info (arg)
+  (interactive "P")
+  (if arg
+      (call-interactively 'chatwork-insert-tag-info-with-title)
+    (chatwork-insert-tag "info" nil t)))
 
 (defun chatwork-insert-tag-info-with-title (title)
   (interactive "sTitle: ")
