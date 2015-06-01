@@ -406,13 +406,14 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 ;; [piconname:{account_id}]
 
 
-(defun chatwork-insert-tag-to (member)
-  (interactive (list (completing-read "To: " `(,@chatwork-member-alist ,@chatwork-member-alias-alist))))
+(defun chatwork-insert-tag-to (members)
+  (interactive (completing-read-multiple "To: " `(,@chatwork-member-alist ,@chatwork-member-alias-alist)))
   (let* ((format-base (format "[To:%%d] %s%%s%s"
                               chatwork-to-tag-prefix
                               chatwork-to-tag-suffix))
          (format-newline (concat format-base "\n"))
          (format-alias   (concat format-base chatwork-member-separator))
+         (member members)
          account-id member-info)
     (cond
      ((setq member-info (assoc member chatwork-member-alist))
