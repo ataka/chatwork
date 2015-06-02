@@ -407,30 +407,30 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 
 
 (defun chatwork-insert-tag-to (members)
-  (interactive (completing-read-multiple "To: " `(,@chatwork-member-alist ,@chatwork-member-alias-alist)))
+  (interactive (list (completing-read-multiple "To: " `(,@chatwork-member-alist ,@chatwork-member-alias-alist))))
   (let* ((format-base (format "[To:%%d] %s%%s%s"
                               chatwork-to-tag-prefix
                               chatwork-to-tag-suffix))
-         (format-newline (concat format-base "\n"))
-         (format-alias   (concat format-base chatwork-member-separator))
-         (member members)
          account-id member-info)
-    (cond
-     ((setq member-info (assoc member chatwork-member-alist))
-      (setq account-id (cdr member-info))
-      (insert (format format-newline account-id (chatwork-member-name-by-account-id account-id))))
-     ((numberp (cdr (setq member-info (assoc member chatwork-member-alias-alist))))
-      (setq account-id (cdr member-info))
-      (insert (format format-newline account-id (chatwork-member-name-by-account-id account-id))))
-     ((listp (cdr member-info))
-      (mapc (lambda (account-id)
-              (when (or (not (eq major-mode 'chatwork-mode))
-                        (rassoc account-id chatwork-member-alist))
-                (insert (format format-alias account-id (chatwork-member-name-by-account-id account-id)))))
-            (cdr member-info))
-      (delete-char (- (length chatwork-member-separator)))
-      (insert "\n"))
-     (t (error "Wrong format of `chatwork-member-alias-alist'")))))
+    (insert
+     (mapconcat
+      (lambda (member)
+        (cond
+         ((setq member-info (assoc member chatwork-member-alist))
+          (setq account-id (cdr member-info))
+          (format format-base account-id (chatwork-member-name-by-account-id account-id)))
+         ((numberp (cdr (setq member-info (assoc member chatwork-member-alias-alist))))
+          (setq account-id (cdr member-info))
+          (format format-base account-id (chatwork-member-name-by-account-id account-id)))
+         ((listp (cdr member-info))
+          (mapconcat (lambda (account-id)
+                       (when (or (not (eq major-mode 'chatwork-mode))
+                                 (rassoc account-id chatwork-member-alist))
+                         (format format-base account-id (chatwork-member-name-by-account-id account-id))))
+                     (cdr member-info)
+                     chatwork-member-separator))
+         (t (error "Wrong format of `chatwork-member-alias-alist'"))))
+      members chatwork-member-separator) "\n")))
 
 (defun chatwork-member-name-by-account-id (account-id)
   (if (eq major-mode 'chatwork-mode)
