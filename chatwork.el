@@ -427,20 +427,23 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
                                    (rassoc account-id chatwork-member-alist))
                            account-id))
                        (cdr member-info)))))
-           members))
-         tmp)
-    (mapc (lambda (elem)
-            (setq tmp
-                  (if (listp elem)
-                      (append elem tmp)
-                    (cons elem tmp))))
-          account-id-list)
-    (setq account-id-list (delq nil (delete-dups tmp)))
+           members)))
     (insert
      (mapconcat
       (lambda (account-id)
         (format format-base account-id (chatwork-member-name-by-account-id account-id)))
-      account-id-list chatwork-member-separator) "\n")))
+      (delq nil (delete-dups (chatwork-flatten1 account-id-list)))
+      chatwork-member-separator) "\n")))
+
+(defun chatwork-flatten1 (sequence)
+  (let (acc)
+    (mapc (lambda (elem)
+            (setq acc
+                  (if (listp elem)
+                      (append elem acc)
+                    (cons elem acc))))
+          sequence)
+    acc))
 
 (defun chatwork-member-name-by-account-id (account-id)
   (if (eq major-mode 'chatwork-mode)
