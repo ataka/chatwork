@@ -443,7 +443,7 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
                       (append elem acc)
                     (cons elem acc))))
           sequence)
-    acc))
+    (reverse acc)))
 
 (defun chatwork-member-name-by-account-id (account-id)
   (if (eq major-mode 'chatwork-mode)
