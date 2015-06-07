@@ -437,12 +437,10 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 
 (defun chatwork-flatten1 (sequence)
   (let (acc)
-    (mapc (lambda (elem)
-            (setq acc
-                  (if (listp elem)
-                      (append elem acc)
-                    (cons elem acc))))
-          sequence)
+    (dolist (elt sequence acc)
+      (setq acc (if (listp elt)
+                    (append elt acc)
+                  (cons elt acc))))
     (reverse acc)))
 
 (defun chatwork-member-name-by-account-id (account-id)
