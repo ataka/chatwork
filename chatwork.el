@@ -411,23 +411,21 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
   (let* ((format-base (format "[To:%%d] %s%%s%s"
                               chatwork-to-tag-prefix
                               chatwork-to-tag-suffix))
-         (member-info nil)
          (account-id-list
           (mapcar
            (lambda (member)
-             (setq member-info (assoc member chatwork-member-alist))
-             (cond
-              (member-info (cdr member-info))
-              ((progn (setq member-info (assoc member chatwork-member-alias-alist))
-                      (numberp (cdr member-info)))
-               (cdr member-info))
-              ((listp member-info)
-               (mapcar (lambda (account-id)
-                         (when (or (not (eq major-mode 'chatwork-mode))
-                                   (rassoc account-id chatwork-member-alist))
-                           account-id))
-                       (cdr member-info)))))
-           members)))
+             (let ((account  (cdr (assoc member chatwork-member-alist)))
+                   (accounts (cdr (assoc member chatwork-member-alias-alist))))
+               (cond
+                ((numberp account)  account)
+                ((numberp accounts) accounts)
+                ((listp   accounts)
+                 (mapcar (lambda (account-id)
+                           (when (or (not (eq major-mode 'chatwork-mode))
+                                     (rassoc account-id chatwork-member-alist))
+                             account-id))
+                         accounts)))))
+             members)))
     (insert
      (mapconcat
       (lambda (account-id)
