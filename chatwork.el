@@ -407,6 +407,16 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 
 
 (defun chatwork-insert-tag-to (members)
+  "Insert ChatWork To tag and its Name
+
+MEMBERS should be a list of account-id numbers or alias string,
+which is defined in `chatwork-member-alias-alist'.
+
+If chatwork-mode, non-members in the room are ignored.
+
+For the insert tag format, see custom variables
+`chatwork-to-tag-prefix', `chatwork-to-tag-suffix' and
+`chatwork-member-separator'."
   (interactive (list (completing-read-multiple "To: " `(,@chatwork-member-alist ,@chatwork-member-alias-alist))))
   (let* ((format-base (format "[To:%%d] %s%%s%s"
                               chatwork-to-tag-prefix
