@@ -347,7 +347,7 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 
 (let ((map chatwork-mode-map))
   (define-key map "\C-c\C-c" 'chatwork-send-message-at-point)
-  (define-key map "\C-c\C-n" 'chatwork)
+  (define-key map "\C-c\C-f" 'chatwork)
   (define-key map "\C-c\C-b" 'chatwork-switch-to-room)
   ;; Tag
   (define-key map "\C-c\C-i\C-t" 'chatwork-insert-tag-to)
