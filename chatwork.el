@@ -233,9 +233,17 @@ CALLBACK sould be a callback function"
 
 (defun chatwork-get-messages-at-room (room-id)
   (interactive)
-  (chatwork-get (format "/rooms/%d/messages?force=0" room-id) 'chatwork-get-messages-callbock))
+  (chatwork-get (format "/rooms/%d/messages?force=0" room-id) 'chatwork-get-messages-callback))
 
-(defun chatwork-get-messages-callback (status))
+(defun chatwork-get-messages-callback (status)
+  (unless (plist-get status :error)
+    (let ((json-object-type 'plist))
+      (unwind-protect
+          (let ((json-data (progn (chatwork-callback-skip-header)
+                                   (json-read))))
+            (with-current-buffer chatwork-last-message-buffer
+              (setq chatwork-room-message-plist json-data)
+        (kill-buffer)))))))
 
 ;;;###autoload
 (defun chatwork-send-message-at-point ()
@@ -338,7 +346,8 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
     (chatwork-get-contacts))
   (let* ((room-name (chatwork-select-room))
          (buffer-name (chatwork-buffer room-name)))
-    (setq chatwork-last-buffer (pop-to-buffer buffer-name))
+    (setq chatwork-last-message-buffer (set-buffer (get-buffer-create (concat "Message: " buffer-name)))
+          chatwork-last-buffer (pop-to-buffer buffer-name))
     (chatwork-mode)
     (chatwork-get-members (cdr (assoc room-name chatwork-room-alist)))
     (setq chatwork-room-name room-name
