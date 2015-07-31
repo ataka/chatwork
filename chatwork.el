@@ -232,7 +232,7 @@ CALLBACK sould be a callback function"
     (cdr (assoc room-name rooms))))
 
 (defun chatwork-get-messages-at-room (room-id)
-  (interactive)
+  (interactive (list (plist-get chatwork-room-plist :room_id)))
   (chatwork-get (format "/rooms/%d/messages?force=0" room-id) 'chatwork-get-messages-callback))
 
 (defun chatwork-get-messages-callback (status)
