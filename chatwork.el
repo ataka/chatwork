@@ -240,10 +240,12 @@ CALLBACK sould be a callback function"
     (let ((json-object-type 'plist))
       (unwind-protect
           (let ((json-data (progn (chatwork-callback-skip-header)
-                                   (json-read))))
-            (with-current-buffer chatwork-last-message-buffer
-              (setq chatwork-room-message-plist json-data)
-        (kill-buffer)))))))
+                                  (unless (eobp) (json-read)))))
+            (if (not json-data)
+                (message "No new messages!")
+              (with-current-buffer chatwork-last-message-buffer
+                (setq chatwork-room-message-plist json-data))))
+        (kill-buffer)))))
 
 ;;;###autoload
 (defun chatwork-send-message-at-point ()
