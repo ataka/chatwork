@@ -244,7 +244,13 @@ CALLBACK sould be a callback function"
             (if (not json-data)
                 (message "No new messages!")
               (with-current-buffer chatwork-last-message-buffer
-                (setq chatwork-message-plist json-data))))
+                (setq chatwork-message-plist json-data)
+                (goto-char (point-max))
+                (mapc (lambda (plist)
+                        (let ((send-at (plist-get plist :send_time))
+                              (body    (plist-get plist :body)))
+                          (insert chatwork-page-delimiter body "\n")))
+                      json-data))))
         (kill-buffer)))))
 
 ;;;###autoload
