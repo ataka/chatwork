@@ -108,10 +108,10 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 (make-variable-buffer-local 'chatwork-room-name)
 (defvar chatwork-room-plist nil)
 (make-variable-buffer-local 'chatwork-room-plist)
-(defvar chatwork-room-message-buffer-name nil)
-(make-variable-buffer-local 'chatwork-room-message-buffer-name)
-(defvar chatwork-room-message-plist nil)
-(make-variable-buffer-local 'chatwork-room-message-plist)
+(defvar chatwork-message-buffer-name nil)
+(make-variable-buffer-local 'chatwork-message-buffer-name)
+(defvar chatwork-message-plist nil)
+(make-variable-buffer-local 'chatwork-message-plist)
 (defvar chatwork-last-buffer nil)
 (defvar chatwork-member-plist nil)
 (make-variable-buffer-local 'chatwork-member-plist)
@@ -244,7 +244,7 @@ CALLBACK sould be a callback function"
             (if (not json-data)
                 (message "No new messages!")
               (with-current-buffer chatwork-last-message-buffer
-                (setq chatwork-room-message-plist json-data))))
+                (setq chatwork-message-plist json-data))))
         (kill-buffer)))))
 
 ;;;###autoload
