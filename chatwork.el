@@ -102,6 +102,7 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 ;; System Variables for chatwork-mode
 
 (defvar chatwork-buffer-name-format "*chatwork: %s*")
+(defvar chatwork-message-buffer-name-format "*chatwork (M): %s*")
 (defvar chatwork-buffer-name nil)
 (make-variable-buffer-local 'chatwork-buffer-name)
 (defvar chatwork-room-name nil)
