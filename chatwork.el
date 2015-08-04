@@ -400,6 +400,9 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 (defun chatwork-buffer (room-name)
   (format chatwork-buffer-name-format room-name))
 
+(defun chatwork-message-buffer (room-name)
+  (format chatwork-message-buffer-name-format room-name))
+
 (defun chatwork-switch-to-room (room-name)
   "Display room ROOM-NAME in the selected window"
   (interactive (list (let ((completion-ignore-case t)
