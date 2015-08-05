@@ -355,8 +355,9 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
     (chatwork-get-contacts))
   (let* ((room-name (chatwork-select-room))
          (buffer-name (chatwork-buffer room-name))
+         (message-buffer-name (chatwork-message-buffer room-name))
          (room-id (cdr (assoc room-name chatwork-room-alist))))
-    (setq chatwork-last-message-buffer (set-buffer (get-buffer-create (concat "Message: " buffer-name)))
+    (setq chatwork-last-message-buffer (set-buffer (get-buffer-create message-buffer-name))
           chatwork-last-buffer (pop-to-buffer buffer-name))
     (chatwork-mode)
     (setq chatwork-room-plist
