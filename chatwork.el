@@ -248,9 +248,12 @@ CALLBACK sould be a callback function"
                 (setq chatwork-message-plist json-data)
                 (goto-char (point-max))
                 (mapc (lambda (plist)
-                        (let ((send-at (plist-get plist :send_time))
+                        (let ((message-id (plist-get plist :message_id))
+                              (send-at (plist-get plist :send_time))
                               (body    (plist-get plist :body)))
-                          (insert chatwork-page-delimiter body "\n")))
+                          (insert chatwork-page-delimiter
+                                  (number-to-string message-id) "\n"
+                                  body "\n")))
                       json-data))))
         (kill-buffer)))))
 
