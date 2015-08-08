@@ -383,16 +383,14 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
                (completing-read "Room: " active-rooms nil nil nil 'chatwork-room-history (car chatwork-room-history)))))
   (switch-to-buffer (chatwork-buffer room-name)))
 
-(defun chatwork-electric-backquote ()
-  "Insert code tag if line begin with ```"
-  (interactive)
-  (if (looking-back (concat "^" chatwork-page-delimiter "?``"))
-      (progn (delete-region (point)
-                            (progn (beginning-of-line)
-                                   (skip-chars-forward chatwork-page-delimiter)
-                                   (point)))
-             (chatwork-insert-tag-code))
-    (call-interactively 'self-insert-command)))
+(defun chatwork-electric-backquote (arg)
+  "Insert a backquote.
+Insert code tag if line begin with ```."
+  (interactive "*P")
+  (self-insert-command (prefix-numeric-value arg))
+  (when (looking-back (concat "^" chatwork-page-delimiter "?```"))
+    (replace-match "")
+    (chatwork-insert-tag-code)))
 
 ;;; Tag
 
