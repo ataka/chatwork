@@ -254,7 +254,8 @@ CALLBACK sould be a callback function"
                               (body    (plist-get plist :body)))
                           (insert chatwork-page-delimiter
                                   (number-to-string message-id) " "
-                                  (number-to-string account-id) "\n"
+                                  (number-to-string account-id) " "
+                                  (number-to-string send-at)    "\n"
                                   body "\n")))
                       json-data))))
         (kill-buffer)))))
