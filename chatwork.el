@@ -249,7 +249,7 @@ CALLBACK sould be a callback function"
                 (goto-char (point-max))
                 (mapc (lambda (plist)
                         (let ((message-id (plist-get plist :message_id))
-                              (account-id (plist get (plist-get plist :account) :account_id)
+                              (account-id (plist-get (plist-get plist :account) :account_id))
                               (send-at (plist-get plist :send_time))
                               (body    (plist-get plist :body)))
                           (insert chatwork-page-delimiter
