@@ -364,8 +364,12 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
          (buffer-name (chatwork-buffer room-name))
          (message-buffer-name (chatwork-message-buffer room-name))
          (room-id (cdr (assoc room-name chatwork-room-alist))))
-    (setq chatwork-last-message-buffer (set-buffer (get-buffer-create message-buffer-name))
-          chatwork-last-buffer (pop-to-buffer buffer-name))
+    (setq chatwork-last-message-buffer (get-buffer-create message-buffer-name))
+    ;; message buffer
+    (set-buffer chatwork-last-message-buffer)
+    (setq chatwork-room-plist (plist-put chatwork-room-plist :room_id room-id))
+    ;; buffer
+    (setq chatwork-last-buffer (pop-to-buffer buffer-name))
     (chatwork-mode)
     (setq chatwork-room-plist (plist-put chatwork-room-plist :room_id room-id))
     (setq chatwork-room-plist (plist-put chatwork-room-plist :message_buffer chatwork-last-message-buffer))
