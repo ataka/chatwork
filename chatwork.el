@@ -113,7 +113,7 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 (make-variable-buffer-local 'chatwork-message-buffer-name)
 (defvar chatwork-message-plist nil)
 (make-variable-buffer-local 'chatwork-message-plist)
-(defvar chatwork-last-buffer nil)
+(defvar chatwork-last-room-buffer nil)
 (defvar chatwork-last-message-buffer nil)
 (defvar chatwork-member-plist nil)
 (make-variable-buffer-local 'chatwork-member-plist)
@@ -178,7 +178,7 @@ CALLBACK sould be a callback function"
       (unwind-protect
           (let ((json-data (progn (chatwork-callback-skip-header)
                                   (json-read))))
-            (with-current-buffer chatwork-last-buffer
+            (with-current-buffer chatwork-last-room-buffer
               (setq chatwork-member-plist json-data)
               (setq chatwork-room-plist
                     (plist-put chatwork-room-plist :member_name
@@ -364,12 +364,14 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
          (buffer-name (chatwork-buffer room-name))
          (message-buffer-name (chatwork-message-buffer room-name))
          (room-id (cdr (assoc room-name chatwork-room-alist))))
-    (setq chatwork-last-message-buffer (get-buffer-create message-buffer-name))
+    (setq chatwork-last-room-buffer (get-buffer-create buffer-name)
+          chatwork-last-message-buffer (get-buffer-create message-buffer-name))
     ;; message buffer
     (set-buffer chatwork-last-message-buffer)
     (setq chatwork-room-plist (plist-put chatwork-room-plist :room_id room-id))
+    (setq chatwork-room-plist (plist-put chatwork-room-plist :room_buffer chatwork-last-room-buffer))
     ;; buffer
-    (setq chatwork-last-buffer (pop-to-buffer buffer-name))
+    (pop-to-buffer chatwork-last-room-buffer)
     (chatwork-mode)
     (setq chatwork-room-plist (plist-put chatwork-room-plist :room_id room-id))
     (setq chatwork-room-plist (plist-put chatwork-room-plist :message_buffer chatwork-last-message-buffer))
