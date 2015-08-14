@@ -90,7 +90,7 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
   "Alist of Contact which cons cell is `(NAME . ACCOUNT_ID)'")
 (defvar chatwork-contact-id-alist nil
   "Alist of Contact which cons cell is `(CHATWORK_ID . ACCOUNT_ID)'")
-(defvar chatwork-room-plist nil)
+;(defvar chatwork-room-plist nil)
 (defvar chatwork-room-alist nil
   "Alist of Rooms which cons cell is `(ROOM_NAME . ROOM_ID)'")
 (defvar chatwork-room-history nil)
