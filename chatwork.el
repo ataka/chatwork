@@ -90,7 +90,6 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
   "Alist of Contact which cons cell is `(NAME . ACCOUNT_ID)'")
 (defvar chatwork-contact-id-alist nil
   "Alist of Contact which cons cell is `(CHATWORK_ID . ACCOUNT_ID)'")
-;(defvar chatwork-room-plist nil)
 (defvar chatwork-room-alist nil
   "Alist of Rooms which cons cell is `(ROOM_NAME . ROOM_ID)'")
 (defvar chatwork-room-history nil)
@@ -157,15 +156,15 @@ CALLBACK sould be a callback function"
   (unless (plist-get status :error)
     (let ((json-object-type 'plist))
       (unwind-protect
-          (let ((json-data (progn (chatwork-callback-skip-header)
-                                  (json-read))))
-            (setq chatwork-room-plist json-data)
+          (let* ((json-data (progn (chatwork-callback-skip-header)
+                                  (json-read)))
+                 (rooms-plist json-data))
             (setq chatwork-room-alist
                   (mapcar (lambda (room)
                             (let ((room-id   (plist-get room :room_id))
                                   (room-name (plist-get room :name)))
                               (cons room-name room-id)))
-                          chatwork-room-plist)))
+                          rooms-plist)))
         (kill-buffer)))))
 
 (defun chatwork-get-members (room-id)
