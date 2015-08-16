@@ -419,14 +419,14 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 (defun chatwork-switch-to-room (room-name)
   "Display room ROOM-NAME in the selected window"
   (interactive (list (let ((completion-ignore-case t)
-               (active-rooms
-                (delq nil (mapcar
-                       (lambda (buf)
-                     (let ((name (buffer-name buf)))
-                       (when (string-match "\\*chatwork: \\(.+\\)\\*" name)
-                         (match-string-no-properties 1 name))))
-                       (buffer-list)))))
-               (completing-read "Room: " active-rooms nil nil nil 'chatwork-room-history (car chatwork-room-history)))))
+                           (active-rooms
+                            (delq nil (mapcar
+                                       (lambda (buf)
+                                         (let ((name (buffer-name buf)))
+                                           (when (string-match "\\*chatwork: \\(.+\\)\\*" name)
+                                             (match-string-no-properties 1 name))))
+                                       (buffer-list)))))
+                       (completing-read "Room: " active-rooms nil nil nil 'chatwork-room-history (car chatwork-room-history)))))
   (switch-to-buffer (chatwork-buffer room-name)))
 
 (defun chatwork-electric-backquote ()
