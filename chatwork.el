@@ -100,7 +100,7 @@ Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 
 ;; System Variables for chatwork-mode
 
-(defvar chatwork-buffer-name-format "*chatwork: %s*")
+(defvar chatwork-room-buffer-name-format "*chatwork: %s*")
 (defvar chatwork-message-buffer-name-format "*chatwork (M): %s*")
 (defvar chatwork-buffer-name nil)
 (make-variable-buffer-local 'chatwork-buffer-name)
@@ -360,7 +360,7 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
   (unless chatwork-contact-plist
     (chatwork-get-contacts))
   (let* ((room-name (chatwork-select-room))
-         (buffer-name (chatwork-buffer room-name))
+         (buffer-name (chatwork-room-buffer room-name))
          (message-buffer-name (chatwork-message-buffer room-name))
          (room-id (cdr (assoc room-name chatwork-room-alist))))
     (setq chatwork-last-room-buffer (get-buffer-create buffer-name)
@@ -410,8 +410,8 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
          (room-name (let ((completion-ignore-case t)) (completing-read "Room: " rooms nil nil nil 'chatwork-room-history (car chatwork-room-history)))))
     room-name))
 
-(defun chatwork-buffer (room-name)
-  (format chatwork-buffer-name-format room-name))
+(defun chatwork-room-buffer (room-name)
+  (format chatwork-room-buffer-name-format room-name))
 
 (defun chatwork-message-buffer (room-name)
   (format chatwork-message-buffer-name-format room-name))
@@ -427,7 +427,7 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
                                              (match-string-no-properties 1 name))))
                                        (buffer-list)))))
                        (completing-read "Room: " active-rooms nil nil nil 'chatwork-room-history (car chatwork-room-history)))))
-  (switch-to-buffer (chatwork-buffer room-name)))
+  (switch-to-buffer (chatwork-room-buffer room-name)))
 
 (defun chatwork-electric-backquote ()
   "Insert code tag if line begin with ```"
