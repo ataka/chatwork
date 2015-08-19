@@ -429,6 +429,13 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
                        (completing-read "Room: " active-rooms nil nil nil 'chatwork-room-history (car chatwork-room-history)))))
   (switch-to-buffer (chatwork-room-buffer room-name)))
 
+(defun chatwork-view-message ()
+  (interactive)
+  (let ((message-buffer (plist-get chatwork-room-plist :message_buffer)))
+    (if (not message-buffer)
+        (error "No message buffer")
+      (switch-to-buffer-other-window message-buffer)))) 
+
 (defun chatwork-electric-backquote ()
   "Insert code tag if line begin with ```"
   (interactive)
