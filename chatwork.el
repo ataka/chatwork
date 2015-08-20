@@ -392,6 +392,7 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
 (let ((map chatwork-mode-map))
   (define-key map "\C-c\C-c" 'chatwork-send-message-at-point)
   (define-key map "\C-c\C-b" 'chatwork-switch-to-room)
+  (define-key map "\C-c\C-o" 'chatwork-view-message)
   ;; Tag
   (define-key map "\C-c\C-i\C-t" 'chatwork-insert-tag-to)
   (define-key map "\C-c\C-i\C-i" 'chatwork-insert-tag-info)
@@ -434,7 +435,7 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
   (let ((message-buffer (plist-get chatwork-room-plist :message_buffer)))
     (if (not message-buffer)
         (error "No message buffer")
-      (switch-to-buffer-other-window message-buffer)))) 
+      (switch-to-buffer-other-window message-buffer))))
 
 (defun chatwork-electric-backquote ()
   "Insert code tag if line begin with ```"
