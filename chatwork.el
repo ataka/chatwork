@@ -435,7 +435,8 @@ DATA should be decoded with `html-hexify-string' if they contains multibyte."
   (let ((message-buffer (plist-get chatwork-room-plist :message_buffer)))
     (if (not message-buffer)
         (error "No message buffer")
-      (switch-to-buffer-other-window message-buffer))))
+      (switch-to-buffer-other-window message-buffer)
+      (chatwork-get-messages (plist-get chatwork-room-plist :room_id)))))
 
 (defun chatwork-electric-backquote ()
   "Insert code tag if line begin with ```"
