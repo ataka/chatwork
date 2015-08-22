@@ -232,6 +232,8 @@ CALLBACK sould be a callback function"
       (setq room-name (let ((completion-ignore-case t)) (completing-read "Room: " rooms nil nil nil 'chatwork-room-history (car chatwork-room-history)))))
     (cdr (assoc room-name rooms))))
 
+(defalias 'chatwork-reload-messages 'chatwork-get-messages)
+
 (defun chatwork-get-messages (room-id)
   (interactive (list (plist-get chatwork-room-plist :room_id)))
   (chatwork-get (format "/rooms/%d/messages?force=0" room-id) 'chatwork-get-messages-callback))
