@@ -247,19 +247,20 @@ CALLBACK sould be a callback function"
             (if (not json-data)
                 (message "No new messages!")
               (with-current-buffer chatwork-last-message-buffer
-                (setq chatwork-message-plist json-data)
-                (goto-char (point-max))
-                (mapc (lambda (plist)
-                        (let ((message-id (plist-get plist :message_id))
-                              (account-id (plist-get (plist-get plist :account) :account_id))
-                              (send-at (plist-get plist :send_time))
-                              (body    (plist-get plist :body)))
-                          (insert chatwork-page-delimiter
-                                  (number-to-string message-id) " "
-                                  (number-to-string account-id) " "
-                                  (number-to-string send-at)    "\n"
-                                  body "\n")))
-                      json-data))))
+                (let ((buffer-read-only nil))
+                  (setq chatwork-message-plist json-data)
+                  (goto-char (point-max))
+                  (mapc (lambda (plist)
+                          (let ((message-id (plist-get plist :message_id))
+                                (account-id (plist-get (plist-get plist :account) :account_id))
+                                (send-at (plist-get plist :send_time))
+                                (body    (plist-get plist :body)))
+                            (insert chatwork-page-delimiter
+                                    (number-to-string message-id) " "
+                                    (number-to-string account-id) " "
+                                    (number-to-string send-at)    "\n"
+                                    body "\n")))
+                        json-data)))))
         (kill-buffer)))))
 
 ;;;###autoload
