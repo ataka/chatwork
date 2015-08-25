@@ -539,6 +539,16 @@ For the insert tag format, see custom variables
   (interactive)
   (insert "[hr]"))
 
+;;; ChatWork Message mode
+
+(define-derived-mode chatwork-message-mode
+  text-mode "ChatWork Message"
+  "Major mode for ChatWork Messages.
+
+\\{chatwork-message-mode-map}"
+)
+
+
 (provide 'chatwork)
 
 ;;; chatwork.el ends here
