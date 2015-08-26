@@ -548,6 +548,14 @@ For the insert tag format, see custom variables
 \\{chatwork-message-mode-map}"
 )
 
+;;
+;; key map
+;;
+
+(let ((map chatwork-message-mode-map))
+  (define-key map "g" 'chatwork-get-messages)
+)
+
 
 (provide 'chatwork)
 
