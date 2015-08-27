@@ -553,9 +553,23 @@ For the insert tag format, see custom variables
 ;;
 
 (let ((map chatwork-message-mode-map))
+  ;; destroy default keymap
+  (let ((key ?!))
+    (while (<= key ?~)
+      (define-key map (char-to-string key) 'chatwork-undefined)
+      (setq key (1+ key))))
+  ;; commands
   (define-key map "g" 'chatwork-get-messages)
 )
 
+;;
+;; Functions for chatwork-message-mode
+;;
+
+(defun chatwork-undefined ()
+  (interactive)
+  (ding)
+  (message "Undefined."))
 
 (provide 'chatwork)
 
