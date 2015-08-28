@@ -571,6 +571,10 @@ For the insert tag format, see custom variables
   (ding)
   (message "Undefined."))
 
+(defun chatwork-previous-message (arg)
+  (interactive "p")
+  (backward-page arg))
+
 (provide 'chatwork)
 
 ;;; chatwork.el ends here
