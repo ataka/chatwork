@@ -560,6 +560,7 @@ For the insert tag format, see custom variables
       (setq key (1+ key))))
   ;; commands
   (define-key map "g" 'chatwork-get-messages)
+  (define-key map "p" 'chatwork-previous-message)
 )
 
 ;;
