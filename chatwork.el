@@ -405,30 +405,47 @@ Insert code tag if line begin with ```."
 ;; [piconname:{account_id}]
 
 
-(defun chatwork-insert-tag-to (member)
-  (interactive (list (completing-read "To: " `(,@chatwork-member-alist ,@chatwork-member-alias-alist))))
+(defun chatwork-insert-tag-to (members)
+  "Insert ChatWork To tag and its Name
+
+MEMBERS should be a list of account-id numbers or alias string,
+which is defined in `chatwork-member-alias-alist'.
+
+If chatwork-mode, non-members in the room are ignored.
+
+For the insert tag format, see custom variables
+`chatwork-to-tag-prefix', `chatwork-to-tag-suffix' and
+`chatwork-member-separator'."
+  (interactive (list (completing-read-multiple "To: " `(,@chatwork-member-alist ,@chatwork-member-alias-alist))))
   (let* ((format-base (format "[To:%%d] %s%%s%s"
                               chatwork-to-tag-prefix
                               chatwork-to-tag-suffix))
-         (format-newline (concat format-base "\n"))
-         (format-alias   (concat format-base chatwork-member-separator))
-         account-id member-info)
-    (cond
-     ((setq member-info (assoc member chatwork-member-alist))
-      (setq account-id (cdr member-info))
-      (insert (format format-newline account-id (chatwork-member-name-by-account-id account-id))))
-     ((numberp (cdr (setq member-info (assoc member chatwork-member-alias-alist))))
-      (setq account-id (cdr member-info))
-      (insert (format format-newline account-id (chatwork-member-name-by-account-id account-id))))
-     ((listp (cdr member-info))
-      (mapc (lambda (account-id)
-              (when (or (not (eq major-mode 'chatwork-mode))
-                        (rassoc account-id chatwork-member-alist))
-                (insert (format format-alias account-id (chatwork-member-name-by-account-id account-id)))))
-            (cdr member-info))
-      (delete-char (- (length chatwork-member-separator)))
-      (insert "\n"))
-     (t (error "Wrong format of `chatwork-member-alias-alist'")))))
+         (account-id-list
+          (mapcar
+           (lambda (member)
+             (let ((account  (cdr (assoc member chatwork-member-alist)))
+                   (accounts (cdr (assoc member chatwork-member-alias-alist))))
+               (cond
+                ((numberp account)  account)
+                ((numberp accounts) accounts)
+                ((listp   accounts)
+                 (mapcar (lambda (account-id)
+                           (when (or (not (eq major-mode 'chatwork-mode))
+                                     (rassoc account-id chatwork-member-alist))
+                             account-id))
+                         accounts)))))
+             members)))
+    (insert
+     (mapconcat
+      (lambda (account-id)
+        (format format-base account-id (chatwork-member-name-by-account-id account-id)))
+      (delq nil (delete-dups (chatwork-flatten1 account-id-list)))
+      chatwork-member-separator) "\n")))
+
+(defun chatwork-flatten1 (sequence)
+  (let (acc)
+    (dolist (elt (reverse sequence) acc)
+      (setq acc (funcall (if (listp elt) #'append #'cons) elt acc)))))
 
 (defun chatwork-member-name-by-account-id (account-id)
   (if (eq major-mode 'chatwork-mode)
