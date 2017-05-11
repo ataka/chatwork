@@ -1,7 +1,7 @@
 ;;; chatwork.el --- ChatWork client for Emacs
 ;; -*- Mode: Emacs-Lisp -*-
 
-;; Copyright (C) 2014, 2015 Masayuki Ataka <masayuki.ataka@gmail.com>
+;; Copyright (C) 2014, 2015, 2016, 2017 Masayuki Ataka <masayuki.ataka@gmail.com>
 
 ;; Author: Masayuki Ataka <masayuki.ataka@gmail.com>
 ;; URL: https://github.com/ataka/chatwork
@@ -80,7 +80,7 @@ See `chatwork-member-alias-alist'.")
 
 ;; System Variables
 
-(defconst chatwork-api-base-url "https://api.chatwork.com/v1"
+(defconst chatwork-api-base-url "https://api.chatwork.com/v2"
   "Base URL of ChatWork API.
 Refecernce available at http://developer.chatwork.com/ja/endpoints.html")
 
